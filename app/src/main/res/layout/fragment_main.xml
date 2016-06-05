@@ -1,0 +1,38 @@
+<!--GridView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnWidth="150dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="0dp"
+    android:horizontalSpacing="0dp"
+    android:stretchMode="columnWidth"
+    tools:context=".MainActivityFragment"
+    android:id="@+id/flavors_grid">
+</GridView-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".RecyclerViewActivity">
+
+
+    <!-- (android.support.v7.widget.RecyclerView )
+         My custom recycler view used to calculate the span in
+          portrait and landscape mode -->
+    <demo.example.com.customarrayadapter.customviews.AutofitRecyclerView
+    android:id="@+id/my_recycler_view"
+    android:layout_width="match_parent"
+    android:columnWidth="@dimen/column_width"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical" />
+
+    <!--android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimaryDark"/-->
+</RelativeLayout>

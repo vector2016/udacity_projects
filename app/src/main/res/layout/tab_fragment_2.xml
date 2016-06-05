@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/info0"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentStart="false"
+            android:layout_below="@+id/imageView">
+
+            <demo.example.com.customarrayadapter.customviews.CustomImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/message_view"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="false"
+                android:src="@drawable/icecream"
+                android:adjustViewBounds="true"
+                android:layout_gravity="top"
+                android:foregroundGravity="top"
+                android:textSize="16sp"
+                android:bufferType="spannable"
+                android:text="@string/text"/>
+
+            <!--LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/imageView"
+                android:id="@+id/info1"
+                android:layout_marginBottom="10dp"-->
+
+            <!--LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"-->
+
+            <!--TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Deadpool"
+                android:id="@+id/textView2" /-->
+            <!--/LinearLayout-->
+
+            <!--LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"-->
+
+            <!--TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7.2"
+                android:id="@+id/textView4" /-->
+
+            <!--ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView2"
+                android:src="@mipmap/ic_launcher" /-->
+
+            <!--/LinearLayout-->
+
+            <!--/LinearLayout-->
+
+            <!--LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/imageView"
+                android:layout_alignParentEnd="false"
+                android:layout_alignParentStart="false"
+                android:baselineAligned="false"
+                android:id="@+id/info2"-->
+
+            <!--LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"-->
+
+            <!--TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Deadpool"
+                android:id="@+id/textView3"
+                android:singleLine="true" /-->
+            <!--/LinearLayout-->
+
+            <!--LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"-->
+
+            <!--TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7.2"
+                android:id="@+id/textView5"
+                android:ellipsize="end"
+                android:singleLine="true" /-->
+
+            <!--ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView6"
+                android:src="@mipmap/ic_launcher" /-->
+
+            <!--/LinearLayout-->
+
+            <!--/LinearLayout-->
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- -->
+
+</RelativeLayout>

@@ -1,0 +1,291 @@
+package demo.example.com.customarrayadapter;
+
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.text.format.Time;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+
+import demo.example.com.customarrayadapter.model.Movie;
+
+public class FetchMoviesTask extends AsyncTask<Void, Void, ArrayList<Movie>> {
+
+    // http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=60dc21f18cb4ecb2cf95340022bc1bc1
+
+        private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
+        private ArrayList<Movie> mMovie;
+        //private ArrayList<Integer> mGenre;
+
+        private MovieListener movieListener;
+
+        String API_KEY = "60dc21f18cb4ecb2cf95340022bc1bc1";
+
+        public FetchMoviesTask (MovieListener movieListener) {
+            this.movieListener = movieListener;
+        }
+
+
+        protected ArrayList<Movie> doInBackground(Void ...Void) {
+            Log.v(LOG_TAG,"doInBackground()");
+
+            // These two need to be declared outside the try/catch
+// so that they can be closed in the finally block.
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+// Will contain the raw JSON response as a string.
+            String forecastJsonStr = null;
+
+
+            try {
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme("http")
+                        .authority("api.themoviedb.org")
+                        .appendPath("3")
+                        .appendPath("discover")
+                        .appendPath("movie")
+                        .appendQueryParameter("sort_by", "popularity.desc")
+                        .appendQueryParameter("api_key", API_KEY);
+
+                // Construct the URL for the OpenWeatherMap query
+                // Possible parameters are available at OWM's forecast API page, at
+                // http://openweathermap.org/API#forecast
+
+                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+                URL url = new URL(builder.toString());
+
+                // Create the request to OpenWeatherMap, and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    forecastJsonStr = null;
+
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                    // But it does make debugging a *lot* easier if you print out the completed
+                    // buffer for debugging.
+                    buffer.append(line + "\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                forecastJsonStr = buffer.toString();
+                mMovie = getMovieDataFromJson(forecastJsonStr);
+
+                Log.v (LOG_TAG, "Forecast JSON String: " + forecastJsonStr );
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                // If the code didn't successfully get the weather data, there's no point in attempting
+                // to parse it.
+                return null;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+        return mMovie;
+        }//doInBackground
+
+        protected void onProgressUpdate(Void... Void) {
+        }//onProgressUpdate
+
+        protected void onPostExecute(ArrayList<Movie> movies) {
+            Log.v(LOG_TAG,"moveListener: "+movieListener);
+            if (movieListener != null)
+                movieListener.getMovies(movies);
+
+
+        }//onPostExecute
+
+    public void setOnMovieListener(MovieListener movieListener) {
+        this.movieListener = movieListener;
+    }
+
+    private ArrayList<Movie> getMovieDataFromJson(String forecastJsonStr)
+            throws JSONException {
+
+        // Now we have a String representing the complete forecast in JSON Format.
+        // Fortunately parsing is easy:  constructor takes the JSON string and converts it
+        // into an Object hierarchy for us.
+
+        // These are the names of the JSON objects that need to be extracted.
+
+        // Location information
+        final String OWM_CITY = "city";
+        final String OWM_CITY_NAME = "name";
+        final String OWM_COORD = "coord";
+
+        // Location coordinate
+        final String OWM_LATITUDE = "lat";
+        final String OWM_LONGITUDE = "lon";
+
+        // Weather information.  Each day's forecast info is an element of the "list" array.
+        final String OWM_LIST = "list";
+
+        final String OWM_PRESSURE = "pressure";
+        final String OWM_HUMIDITY = "humidity";
+        final String OWM_WINDSPEED = "speed";
+        final String OWM_WIND_DIRECTION = "deg";
+
+        // All temperatures are children of the "temp" object.
+        final String OWM_TEMPERATURE = "temp";
+        final String OWM_MAX = "max";
+        final String OWM_MIN = "min";
+
+        final String OWM_WEATHER = "weather";
+        final String OWM_DESCRIPTION = "main";
+        final String OWM_WEATHER_ID = "id";
+
+        final String RESULTS = "results"; // array of objects
+        final String POSTER_PATH = "poster_path";       // string
+        final String ADULT = "adult";           //boolean
+        final String OVERVIEW = "overview";  // string
+        final String RELEASE_DATE = "release_date"; // string; date
+        final String GENRE_IDS = "genre_ids"; // list of ints
+        final String ID = "id";     //long
+        final String ORIGINAL_TITLE = "original_title"; //String
+        final String ORIGINAL_LANGUAGE = "original_language";   //string
+        final String TITLE = "title"; //string
+        final String BACKDROP_PATH = "backdrop_path";// string
+        final String POPULARITY = "popularity";
+        final String VOTE_COUNT = "vote_count"; //int
+        final String VIDEO = "video"; // boolean
+        final String VOTE_AVERAGE = "vote_average"; // float
+
+            ArrayList<Movie> mMovie = new ArrayList<Movie>();
+            ArrayList<Integer> mGenre = new ArrayList<Integer>();
+
+            JSONObject movieDataJson = new JSONObject(forecastJsonStr);
+            JSONArray movieArray = movieDataJson.getJSONArray(RESULTS);
+
+            for (int i = 0;i < movieArray.length();i++){
+                Movie movie = new Movie();
+                JSONObject movieJson = movieArray.getJSONObject(i);
+                String movieTitle = movieJson.getString(ORIGINAL_TITLE);
+                movie.setOriginalTitle(movieTitle);
+
+                String pPath = movieJson.getString(POSTER_PATH);
+                movie.setPosterPath(pPath);
+
+                Boolean adult = movieJson.getBoolean(ADULT);
+                movie.setAdult(adult);
+
+                String overview = movieJson.getString(OVERVIEW);
+                movie.setOverview(overview);
+
+                String releaseDate = movieJson.getString(RELEASE_DATE);
+                movie.setReleaseDate(releaseDate);
+
+                JSONArray genreIds = movieJson.getJSONArray(GENRE_IDS);
+
+                for (int j=0;j<genreIds.length();j++){
+                    int genre = genreIds.getInt(j);
+                    mGenre.add(genre);
+                }
+                movie.setGenreIds(mGenre);
+                mGenre.clear();
+                Long id = movieJson.getLong(ID);
+                movie.setId(id);
+
+                String title = movieJson.getString(TITLE);
+                movie.setTitle(title);
+
+                String backdropPath = movieJson.getString(BACKDROP_PATH);
+                movie.setBackdropPath(backdropPath);
+
+                Double popularity = movieJson.getDouble(POPULARITY);
+                movie.setPopularity(popularity);
+
+                Integer voteCount = movieJson.getInt(VOTE_COUNT);
+                movie.setVoteCount(voteCount);
+
+                Double voteAverage = movieJson.getDouble(VOTE_AVERAGE);
+                movie.setVoteAverage(voteAverage);
+
+                mMovie.add(movie);
+
+                //Log.v(LOG_TAG,"Movie title: "+movieTitle);
+            }
+
+        //long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
+
+        // Insert the new weather information into the database
+        //Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+
+        // OWM returns daily forecasts based upon the local time of the city that is being
+        // asked for, which means that we need to know the GMT offset to translate this data
+        // properly.
+
+        // Since this data is also sent in-order and the first day is always the
+        // current day, we're going to take advantage of that to get a nice
+        // normalized UTC date for all of our weather.
+
+        Time dayTime = new Time();
+        dayTime.setToNow();
+
+        // we start at the day returned by local time. Otherwise this is a mess.
+        int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+
+        // now we work exclusively in UTC
+        dayTime = new Time();
+
+
+            /*
+            int inserted = 0;
+            // add to database
+            if ( cVVector.size() > 0 ) {
+                ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                cVVector.toArray(cvArray);
+                getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
+
+                // delete old data so we don't build up an endless history
+                getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+                        WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+                        new String[] {Long.toString(dayTime.setJulianDay(julianStartDay-1))});
+
+                // Call notifyWeather(); within the onPerformSync function.
+                // You should call it when weather data is inserted into the database
+                // (right after bulkInsert is called).
+                notifyWeather();
+
+            }
+            */
+        //Log.d(LOG_TAG, "Sunshine Service Complete. " + cVVector.size() + " Inserted");
+
+        return mMovie;
+    }
+
+
+    }//FetchMovies
