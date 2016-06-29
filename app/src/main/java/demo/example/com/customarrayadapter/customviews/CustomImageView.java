@@ -11,8 +11,12 @@ package demo.example.com.customarrayadapter.customviews;
     import android.text.StaticLayout;
     import android.text.TextPaint;
     import android.util.AttributeSet;
+    import android.util.DisplayMetrics;
     import android.util.Log;
+    import android.view.Display;
     import android.view.View;
+    import android.view.WindowManager;
+    import android.widget.ImageView;
     import android.widget.TextView;
 
     import com.bumptech.glide.Glide;
@@ -24,10 +28,9 @@ package demo.example.com.customarrayadapter.customviews;
     import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
     import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback.OnOrientationChangedListener;
 
-public class CustomImageView extends TextView implements
+public class CustomImageView extends ImageView implements
                                 ImageLoadedCallback.OnImageLoadedListener {
-        private ViewTarget<CustomImageView, GlideDrawable> viewTarget0,
-            viewTarget1, viewTarget2;
+
         CustomImageView customView0, customView1;
         private Drawable mDrawableLeft, mDrawableRight;
         private static final int mColumnCount = 2;
@@ -48,18 +51,26 @@ public class CustomImageView extends TextView implements
         Glide.
                 with(context)
             .load("http://image.tmdb.org/t/p/w342//sSvgNBeBNzAuKl8U8sP50ETJPgx.jpg")
-        //.load("http://image.tmdb.org/t/p/w780//uS1SkjVviraGfFNgkDwe7ohTm8B.jpg")
                 .asBitmap()
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
                         // Do something with bitmap here.
                         setLeftDrawable(bitmap);
-
-                        Log.d("LOG","****onResourceReady() left again!!: "+mDrawableLeft);
                     }
                 });
+    }
 
+    private static String getScreenResolution(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+        return "{" + width + "," + height + "}";
     }
 
     public Drawable getLeftDrawable(){
@@ -175,9 +186,9 @@ public class CustomImageView extends TextView implements
         setMeasuredDimension(widthSize, heightSize);
     }
 
-
     @Override
-    public void onImageLoaded(String bitmap, Context context) {
+    public void onImageLoaded(String bitmap) {
         Log.d("LOG","** onImageLoaded()");
+
     }
 }

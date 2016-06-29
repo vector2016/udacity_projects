@@ -2,6 +2,7 @@ package demo.example.com.customarrayadapter.contentviews;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,18 +20,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
+import com.bumptech.glide.load.resource.bitmap.BitmapResource;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+//import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.target.ViewTarget;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.squareup.picasso.Transformation;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import demo.example.com.customarrayadapter.MainActivity;
 import demo.example.com.customarrayadapter.MovieActivity;
 import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.customviews.CustomImageView;
@@ -38,145 +56,84 @@ import demo.example.com.customarrayadapter.customviews.MyLeadingMarginSpan2;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback.OnImageLoadedListener;
 import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback.OnOrientationChangedListener;
+import demo.example.com.customarrayadapter.model.Movie;
 
-public class TabFragment1 extends Fragment implements OnImageLoadedListener,
-                                                    OnOrientationChangedListener {
+public class TabFragment1 extends Fragment implements
+                            //OnImageLoadedListener,
+                            OnOrientationChangedListener,
+                            TaskFragment. TaskCallbacks {
     private static final int IMAGE_RATIO = 2;                    // This is the proportion of the custom view i.e IMAGE_SIZE = 2 is
                                                                 // half the size, IMAGE_SIZE = 4 is a quarter of the size etc.
     private static final int IMAGE_PADDING = 10;
-    private static final String TAG_MAIN_ACTIVITY_FRAGMENT = "tag_main_activity_fragment";
-
-
-    MainActivityFragment mMainActivityFragment;
-
     ImageLoadedCallback listener;
-
-    private ViewTarget<CustomImageView, GlideDrawable>
-        viewTarget0,
-        viewTarget1,
-        viewTarget2;
-
     CustomImageView
         customView;
-
     Drawable mImage;
-
     Bitmap mBitmap;
-
     String mBitmapImage;
-
     SpannableString ss;
     int mWidth,
         mHeight,
         leftMargin,
         finalHeight,
         finalWidth;
-
     double aspectRatio;
-
     ImageView imageView;
-
     TextView messageView;
-
     View rootView;
-
     Context context;
+    Movie movie;
+    ProgressBar progressBar;
+    List<SimpleTarget> targets = new ArrayList<>();
 
-    int numberOfGlobalLayoutCalled = 0;
-    private int noParagraphs = 0;
+    public void setArguments(Bundle args) {
+        super.setArguments(args);
+        ArrayList<Movie> movieList = args.getParcelableArrayList("movie_Array_List_Extra");
+        int position = args.getInt("position_extra",0);
+        assert movieList != null;
+        movie = movieList.get(position);
+
+
+        // now adjust what ever you want to display
+    }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        context = (MovieActivity) activity;
-        //activityCommunicator =  context;
-        Log.d("LOG","***** What ? "+ context);
+        context = activity;
+
     }
 
     public void setImageLoadedListener(ImageLoadedCallback listener){
         this.listener = listener;
     }
-
-    @Override
-    public void onImageLoaded(String bitmap) {
-        Log.d("LOG","** Image!? " + bitmap);
-        Glide.
-                with(getContext())
-                //.load("http://image.tmdb.org/t/p/w342//fqe8JxDNO8B8QfOGTdjh6sPCdSC.jpg")
-                .load(bitmap)
-                .asBitmap()
-                .placeholder(R.drawable.froyo)
-                .animate(R.anim.slide_in_left)
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(final Bitmap bitmap, GlideAnimation anim) {
-                        Log.d("LOG","****onResourceReady() TabFragment "+ imageView );
-                        customView.setOnOrientationChangedListener(
-                                new   OnOrientationChangedListener() {
-                                    /**
-                                     * On screen (orientation) rotation the ratio is re-calculated.
-                                     * @param width return the width of the custom view
-                                     * @param height return the height of the custom view
-                                     */
-                                    @Override
-                                    public void onOrientationChanged(int width, int height) {
-                                        // Do something with bitmap here.
-                                        mImage = new BitmapDrawable(getResources(), bitmap);
-                                        imageView.setBackground(mImage);
-                                        Log.d("LOG","Bitmap: " + mBitmap);
-                                        aspectRatio = (double) mImage.getIntrinsicHeight() / mImage.getIntrinsicWidth();  // Use intrinsic dimensions to find the height of the image
-                                        finalWidth = (width) / IMAGE_RATIO;                                          // The second image is half the width of the header image
-                                        leftMargin = finalWidth + IMAGE_PADDING;                                    // padding (left margin) for image
-                                        finalHeight = (int) (finalWidth * aspectRatio);
-                                        imageView.getLayoutParams().width = finalWidth;                             // Once correct aspect ratio is calculated reset these dimensions to
-                                        imageView.getLayoutParams().height = finalHeight;                           // the image.
-                                        makeSpan();                                                                 // Wrap the text around image.
-                                        Log.d("LOG", "** onDimensionChanged");
-                                    }
-                                });
-                    }
-                });
-
+    //@Override
+    public void onImageLoaded(String mImageId, Context context) {
+        //Log.d("LOG","** Image!? " + bitmap);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("BitmapImage", mBitmap);
-        Log.d("LOG","onSaveInstance: ");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         if (rootView != null && rootView.getParent() != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             parent.removeView(rootView);
-            Log.i("Test", "**************view.getParent(): " + rootView.getParent() + "    " + rootView);
         }
 
+
+
+        //displayBitmap("http://image.tmdb.org/t/p/w342/" + movie.getPosterPath());
         return  rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        // Restore saved state.
-        //if (savedInstanceState != null) {
-        //}
-
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        mMainActivityFragment = (MainActivityFragment) fm.findFragmentByTag(TAG_MAIN_ACTIVITY_FRAGMENT);
-
-        // If we haven't retained the worker fragment, then create it
-        // and set this MainActivityFragment as the TaskFragment's target fragment.
-        if (mMainActivityFragment == null) {
-            mMainActivityFragment = new MainActivityFragment();
-            mMainActivityFragment.setTargetFragment(this, 1);
-            fm.beginTransaction().add(mMainActivityFragment, TAG_MAIN_ACTIVITY_FRAGMENT).commit();
-        }
-
 
 
         //if (mTaskFragment.isRunning()) {
@@ -189,21 +146,96 @@ public class TabFragment1 extends Fragment implements OnImageLoadedListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //retains fragment instance across Activity re-creation
+
+
         rootView = createView(savedInstanceState);
 
         messageView = (TextView) rootView.findViewById(R.id.message_view);
         customView = (CustomImageView) rootView.findViewById(R.id.custom_view);
         RelativeLayout layout = (RelativeLayout) rootView.findViewById(R.id.info0);
         imageView =  (ImageView)  rootView.findViewById(R.id.text_image01);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
+
+        Log.d("LOG"," movie object sent from MainActivityFragment() :" + movie);
+        String image = "http://image.tmdb.org/t/p/w342/" + movie.getPosterPath();
+
+        Log.d("LOG"," tagged image: "+ rootView.getTag());
+
+        ViewTarget<CustomImageView, BitmapResource> viewTarget = new ViewTarget<CustomImageView, BitmapResource>( customView ) {
+            @Override
+            public void onResourceReady(BitmapResource resource, GlideAnimation<? super BitmapResource> glideAnimation) {
+                this.view.setLeftDrawable( resource.get() );
+            }
+        };
+        /*
+        Glide
+                .with( context.getApplicationContext() ) // safer!
+                .load( "http://image.tmdb.org/t/p/w342//sSvgNBeBNzAuKl8U8sP50ETJPgx.jpg" )
+                .into(viewTarget);
+        */
 
 
-        // Retain this fragment across configuration changes.
-        setRetainInstance(true);
+
+        progressBar.setVisibility(View.VISIBLE);
+        //Glide.with(getContext())
+        //        .load(image)
+        //        //.diskCacheStrategy(DiskCacheStrategy.ALL)
+        //        .listener(new RequestListener<String, GlideDrawable>() {
+        //            @Override
+        //            public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<GlideDrawable> target, boolean isFirstResource) {
+        //                return false;
+        //            }
+        //
+        //            @Override
+        //            public boolean onResourceReady(GlideDrawable resource, String model,
+        //                                           com.bumptech.glide.request.target.Target<GlideDrawable> target,
+        //                                           boolean isFromMemoryCache, boolean isFirstResource) {
+        //                progressBar.setVisibility(View.GONE);
+        //                return false;
+        //            }
+        //        })
+        //        .into(imageView)
+        //;
+
+        Glide.with(getContext())
+                .load(image)
+                .downloadOnly(500, 500);
+
+
+        Glide.with(getContext())
+                .load(image)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        customView.setOnOrientationChangedListener(new OnOrientationChangedListener() {
+                            /**
+                             * On screen (orientation) rotation the ratio is re-calculated.
+                             * @param width return the width of the custom view
+                             * @param height return the height of the custom view
+                             */
+                            @Override
+                            public void onOrientationChanged(int width, int height) {
+                                // Do something with bitmap here.
+                                mImage = new BitmapDrawable(getContext().getResources(), resource);
+                                imageView.setBackground(mImage);
+                                aspectRatio = (double) mImage.getIntrinsicHeight() / mImage.getIntrinsicWidth();  // Use intrinsic dimensions to find the height of the image
+                                finalWidth = (width) / IMAGE_RATIO;                                          // The second image is half the width of the header image
+                                leftMargin = finalWidth + IMAGE_PADDING;                                    // padding (left margin) for image
+                                finalHeight = (int) (finalWidth * aspectRatio);
+                                imageView.getLayoutParams().width = finalWidth;                             // Once correct aspect ratio is calculated reset these dimensions to
+                                imageView.getLayoutParams().height = finalHeight;                           // the image.
+                                makeSpan();                                                                 // Wrap the text around image.
+                            }
+                        });
+                    }
+                });
+
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
     }
-
-
 
     public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -215,6 +247,10 @@ public class TabFragment1 extends Fragment implements OnImageLoadedListener,
 
     public View createView(Bundle saveInstanceState){
         final View view = getActivity().getLayoutInflater().inflate(R.layout.tab_fragment_1, null, false);
+
+
+        //imageView.setTag(target);
+
         return view;
     }
 
@@ -283,5 +319,33 @@ public class TabFragment1 extends Fragment implements OnImageLoadedListener,
     @Override
     public void onOrientationChanged(int width, int height) {
         Log.d("LOG","*** onOrientationChanged()");
+    }
+
+    @Override
+    public void onPreExecute() {
+
+    }
+
+    @Override
+    public void onProgressUpdate(int percent) {
+
+    }
+
+    @Override
+    public void onCancelled() {
+
+    }
+
+    @Override
+    public void onPostExecute(ArrayList<Movie> movies, Cursor c) {
+        Log.d("LOG","onPostExecute( .......)" + movies);
+    }
+
+    public class MovieImage {
+        private String image = "http://image.tmdb.org/t/p/w342//s7OVVDszWUw79clca0durAIa6mw.jpg";
+
+        public String getImage() {
+            return image;
+        }
     }
 }
