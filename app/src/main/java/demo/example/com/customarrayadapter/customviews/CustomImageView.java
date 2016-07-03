@@ -16,6 +16,7 @@ package demo.example.com.customarrayadapter.customviews;
     import android.view.Display;
     import android.view.View;
     import android.view.WindowManager;
+    import android.widget.FrameLayout;
     import android.widget.ImageView;
     import android.widget.TextView;
 
@@ -28,10 +29,9 @@ package demo.example.com.customarrayadapter.customviews;
     import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
     import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback.OnOrientationChangedListener;
 
-public class CustomImageView extends ImageView implements
+public class CustomImageView extends TextView implements
                                 ImageLoadedCallback.OnImageLoadedListener {
 
-        CustomImageView customView0, customView1;
         private Drawable mDrawableLeft, mDrawableRight;
         private static final int mColumnCount = 2;
         private static int mCount = 0;
@@ -48,17 +48,16 @@ public class CustomImageView extends ImageView implements
         }
 
         public void initialize( final Context context) {
-        Glide.
-                with(context)
-            .load("http://image.tmdb.org/t/p/w342//sSvgNBeBNzAuKl8U8sP50ETJPgx.jpg")
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
-                        // Do something with bitmap here.
-                        setLeftDrawable(bitmap);
-                    }
-                });
+        //Glide.
+        //        with(context)
+        //    .load("http://image.tmdb.org/t/p/w342//sSvgNBeBNzAuKl8U8sP50ETJPgx.jpg")
+        //        .asBitmap()
+        //        .into(new SimpleTarget<Bitmap>() {
+        //  public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
+        //                // Do something with bitmap here.
+        //                setDrawable(bitmap);
+        //            }
+        //        });
     }
 
     private static String getScreenResolution(Context context)
@@ -85,8 +84,9 @@ public class CustomImageView extends ImageView implements
         else return null;
     }
 
-    public void setLeftDrawable(Bitmap bitmap){
-        mDrawableLeft = new BitmapDrawable(getResources(), bitmap);
+    public void setDrawable(Drawable drawable){
+        //mDrawableLeft = new BitmapDrawable(getResources(), bitmap);
+        mDrawableLeft = drawable;
         updateContentBounds();
         invalidate();
     }
@@ -131,7 +131,7 @@ public class CustomImageView extends ImageView implements
             int w = left + getWidth();
             int h = (int) (top + (getWidth() * ratio));
             mLheight = h;
-            mDrawableLeft.setColorFilter(0xffff0000, PorterDuff.Mode.LIGHTEN);
+            //mDrawableLeft.setColorFilter(0xffff0000, PorterDuff.Mode.LIGHTEN);
             mDrawableLeft.setBounds(left,
                     top,
                     w,

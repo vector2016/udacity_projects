@@ -9,7 +9,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.text.SpannableString;
@@ -24,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
@@ -33,6 +37,7 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.PreloadTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 //import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.target.ViewTarget;
@@ -45,6 +50,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,6 +77,7 @@ public class TabFragment1 extends Fragment implements
     Drawable mImage;
     Bitmap mBitmap;
     String mBitmapImage;
+    String overView;
     SpannableString ss;
     int mWidth,
         mHeight,
@@ -82,9 +89,17 @@ public class TabFragment1 extends Fragment implements
     TextView messageView;
     View rootView;
     Context context;
-    Movie movie;
+    static Movie movie;
     ProgressBar progressBar;
+    List<String> cachedImages = new ArrayList<>();
     List<SimpleTarget> targets = new ArrayList<>();
+    private  FutureTarget<File> futureTarget;
+    private ViewTarget<CustomImageView, GlideDrawable> viewTarget;
+    private Thread mThread;
+    private static String mImageHeader;
+    private static Handler handler;
+    private static File cacheFile;
+    private int noCache = 0;
 
     public void setArguments(Bundle args) {
         super.setArguments(args);
@@ -124,9 +139,6 @@ public class TabFragment1 extends Fragment implements
             ViewGroup parent = (ViewGroup) rootView.getParent();
             parent.removeView(rootView);
         }
-
-
-
         //displayBitmap("http://image.tmdb.org/t/p/w342/" + movie.getPosterPath());
         return  rootView;
     }
@@ -148,9 +160,7 @@ public class TabFragment1 extends Fragment implements
         super.onCreate(savedInstanceState);
         //retains fragment instance across Activity re-creation
 
-
         rootView = createView(savedInstanceState);
-
         messageView = (TextView) rootView.findViewById(R.id.message_view);
         customView = (CustomImageView) rootView.findViewById(R.id.custom_view);
         RelativeLayout layout = (RelativeLayout) rootView.findViewById(R.id.info0);
@@ -158,55 +168,46 @@ public class TabFragment1 extends Fragment implements
         progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
 
         Log.d("LOG"," movie object sent from MainActivityFragment() :" + movie);
+
         String image = "http://image.tmdb.org/t/p/w342/" + movie.getPosterPath();
+        String imageHeader = "http://image.tmdb.org/t/p/w342/" + movie.getBackdropPath();
 
-        Log.d("LOG"," tagged image: "+ rootView.getTag());
 
-        ViewTarget<CustomImageView, BitmapResource> viewTarget = new ViewTarget<CustomImageView, BitmapResource>( customView ) {
-            @Override
-            public void onResourceReady(BitmapResource resource, GlideAnimation<? super BitmapResource> glideAnimation) {
-                this.view.setLeftDrawable( resource.get() );
-            }
-        };
-        /*
-        Glide
-                .with( context.getApplicationContext() ) // safer!
-                .load( "http://image.tmdb.org/t/p/w342//sSvgNBeBNzAuKl8U8sP50ETJPgx.jpg" )
-                .into(viewTarget);
-        */
+        FutureTarget<File> futureCache = Glide.with(getContext()).load(imageHeader).downloadOnly(500,500);
+        try {
+            File fileCache = futureCache.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        Glide.with(getContext())
+                    .load(image)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .preload();
+
+
+        Glide.with(getContext())
+                .load(futureCache)
+                //.diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new ViewTarget<CustomImageView, GlideDrawable>( customView ) {
+                    @Override
+                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                        Log.d("LOG","** view **" + this.getView() + "** the image **" + resource.getCurrent());
+
+                        this.view.setDrawable( resource.getCurrent() );
+                    }
+                });
 
 
 
         progressBar.setVisibility(View.VISIBLE);
-        //Glide.with(getContext())
-        //        .load(image)
-        //        //.diskCacheStrategy(DiskCacheStrategy.ALL)
-        //        .listener(new RequestListener<String, GlideDrawable>() {
-        //            @Override
-        //            public boolean onException(Exception e, String model, com.bumptech.glide.request.target.Target<GlideDrawable> target, boolean isFirstResource) {
-        //                return false;
-        //            }
-        //
-        //            @Override
-        //            public boolean onResourceReady(GlideDrawable resource, String model,
-        //                                           com.bumptech.glide.request.target.Target<GlideDrawable> target,
-        //                                           boolean isFromMemoryCache, boolean isFirstResource) {
-        //                progressBar.setVisibility(View.GONE);
-        //                return false;
-        //            }
-        //        })
-        //        .into(imageView)
-        //;
-
-        Glide.with(getContext())
-                .load(image)
-                .downloadOnly(500, 500);
-
 
         Glide.with(getContext())
                 .load(image)
                 .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                //.diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -216,6 +217,7 @@ public class TabFragment1 extends Fragment implements
                              * @param width return the width of the custom view
                              * @param height return the height of the custom view
                              */
+
                             @Override
                             public void onOrientationChanged(int width, int height) {
                                 // Do something with bitmap here.
@@ -232,10 +234,8 @@ public class TabFragment1 extends Fragment implements
                         });
                     }
                 });
-
-
-        FragmentManager fm = getActivity().getSupportFragmentManager();
     }
+
 
     public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -258,8 +258,8 @@ public class TabFragment1 extends Fragment implements
         /**
          * Get the text
          */
-        //String plainText=getResources().getString(R.string.text_sample);
-        String mText = "Older post, but since there is no accepted answer and I have just found solution for same problem in my app, I will post a solution.\n" +
+        String plainText=getResources().getString(R.string.text_sample);
+         String mText = "Older post, but since there is no accepted answer and I have just found solution for same problem in my app, I will post a solution.\n" +
                 "\n" +
                 "I have discovered that text without any line break works well. Text with a line break that splits the text into 2 parts in a way that the part before line break ends to the right of the image, and the part after line break starts already on next line bellow the image, this also works well.\n" +
                 "\n" +
