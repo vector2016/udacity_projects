@@ -13,7 +13,7 @@ import java.io.Serializable;
 import demo.example.com.customarrayadapter.adapter.AndroidFlavorCursorRecyclerViewAdapter;
 
 @SuppressWarnings("serial") //With this annotation we are going to hide compiler warnings
-public class passParcelFrag implements Parcelable {
+public class passParcelFrag{
     public Object id;
 
     public passParcelFrag(Object ids) {
@@ -30,28 +30,6 @@ public class passParcelFrag implements Parcelable {
         id = (Object) in.readValue(Object.class.getClassLoader());
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(id);
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<passParcelFrag> CREATOR = new Parcelable.Creator<passParcelFrag>() {
-        @Override
-        public passParcelFrag createFromParcel(Parcel in) {
-            return new passParcelFrag(in);
-        }
-
-        @Override
-        public passParcelFrag[] newArray(int size) {
-            return new passParcelFrag[size];
-        }
-    };
 
 
 }

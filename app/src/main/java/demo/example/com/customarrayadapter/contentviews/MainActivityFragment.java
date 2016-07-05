@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+
 import java.util.ArrayList;
 
 import demo.example.com.customarrayadapter.MovieActivity;
@@ -33,26 +35,23 @@ import demo.example.com.customarrayadapter.customviews.data.FlavorsContract;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback.OnImageLoadedListener;
 import demo.example.com.customarrayadapter.model.AndroidFlavor;
 import demo.example.com.customarrayadapter.model.Movie;
+import demo.example.com.customarrayadapter.model.PassReference;
 
-//import android.support.v4.app.Fragment;
 
 /**
  * A fragment containing the list view of Android versions.
  */
 
-//interface MovieListener {
-//     void getMovies(ArrayList<Movie> movie);
-//}
-
 public class MainActivityFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
-        //MovieListener,
-        TaskFragment. TaskCallbacks {
+        TaskFragment. TaskCallbacks{
 
 
     private static String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private static final boolean DEBUG = true; // Set this to false to disable logs.
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
+    private static final String TAG_TAB_FRAGMENT1 = "tab_fragment1";
+
     private static final String HIGHEST_RATED_MOVIES = "vote_average.desc";
     private static final String MOST_POPULAR_MOVIES = "popularity.desc";
     private static final int CURSOR_LOADER_ID = 0;
@@ -63,42 +62,33 @@ public class MainActivityFragment extends Fragment implements
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<AndroidFlavor> flavorList;
     private TaskFragment mTaskFragment;
-    private TabFragment1 mFrag1;
+    private TabFragment1 mTabFragment1;
     private Cursor cur;
     ArrayList<Movie> moviesInfo;
     TabFragment1 context;
     private String mBitmap;
+    private int mIndex;
     private OnImageLoadedListener mImageLoadedCallback;
+    private onPassReferenceListener mOnPassReferenceCallback;
 
 
-    static class Info {
-        public String poster;
-        public String posterBackdrop;
-        public String description;
-    }
 
     private AndroidFlavor[] androidFlavors;
     SharedPreferences mPrefs;
+    static onPassReferenceListener myListener;
 
-    interface OnImageLoadedCallbacks {
+    public interface OnImageLoadedCallbacks {
         void onImageLoaded(String bitmap);
+    }
+
+    public interface onPassReferenceListener {
+        void onPassReference(MainActivityFragment fragment);
     }
 
 
     public MainActivityFragment() {
     }
 
-    //@Override
-    //public void onCreate(Bundle savedInstanceState){
-    //    super.onCreate(savedInstanceState);
-    //    new FetchMoviesTask().execute();
-    //    if(savedInstanceState == null || !savedInstanceState.containsKey("flavors")) {
-    //        flavorList = new ArrayList<AndroidFlavor>(Arrays.asList(androidFlavors));
-    //    }
-    //    else {
-    //        flavorList = savedInstanceState.getParcelableArrayList("flavors");
-    //    }
-    //}
 
 
     /**
@@ -107,6 +97,11 @@ public class MainActivityFragment extends Fragment implements
      * will pass us a reference to the newly created Activity after
      * each configuration change.
      */
+
+    public void setOnPassReferenceListener (onPassReferenceListener listener) {
+        listener.onPassReference(MainActivityFragment.this);
+    }
+
     @Override
     public void onAttach(Activity activity) {
         if (DEBUG) Log.i(LOG_TAG, "onAttach(Activity)");
@@ -120,8 +115,11 @@ public class MainActivityFragment extends Fragment implements
          * Hold a reference to the target fragment so we can report back the task's
          * current progress and results.
          */
-        mImageLoadedCallback = (OnImageLoadedListener) getTargetFragment();
-        if (DEBUG) Log.d(LOG_TAG,"mCallImageLoadedCallbacks initialised!!: "+mImageLoadedCallback);
+
+        mOnPassReferenceCallback = (onPassReferenceListener) getTargetFragment();
+        if (DEBUG) Log.d(LOG_TAG,"mOnPassReferenceCallback initialised!!" + mOnPassReferenceCallback);
+        //mImageLoadedCallback = (OnImageLoadedListener) getTargetFragment();
+        //if (DEBUG) Log.d(LOG_TAG,"mCallImageLoadedCallbacks initialised!!: "+mImageLoadedCallback);
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -135,22 +133,8 @@ public class MainActivityFragment extends Fragment implements
 
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
-        //
         setHasOptionsMenu(true);
-        if (mImageLoadedCallback != null) {
-            mImageLoadedCallback.
-                    //onImageLoaded("http://image.tmdb.org/t/p/w342/"+mBitmap);
-                    onImageLoaded("http://image.tmdb.org/t/p/w342//fqe8JxDNO8B8QfOGTdjh6sPCdSC.jpg");
-                    //onImageLoaded("http://image.tmdb.org/t/p/w342//5TQ6YDmymBpnF005OyoB7ohZps9.jpg");
-
-        }
     }
-
-    /////////////////////////////////**
-    //public void setOnImageReadyListener(OnImageReadyListener listener){
-    //    this.listener = listener;
-    //}
-    /////////////////////////////////
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -159,20 +143,7 @@ public class MainActivityFragment extends Fragment implements
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.my_recycler_view);// Added
         mRecyclerView.setHasFixedSize(true);
-        //onImageReady("Dummy bitmap image!!");
-        //mRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-        //    @Override
-        //    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        //        int totalWidth = parent.getWidth();
-        //        int maxCardWidth = getResources().getDimensionPixelOffset(R.dimen.card_max_width);
-        //        int sidePadding = (totalWidth - maxCardWidth) / 2;
-        //        sidePadding = Math.max(0, sidePadding);
-        //        outRect.set(0, sidePadding, 0, sidePadding);
-        //    }
-        //});
-        // THE TWO LINES BELOW HAVE BEEN MOVED TO MY RECYCLER CUSTOM VIEW
-        //mLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), 3);
-        //mRecyclerView.setLayoutManager(mLayoutManager);
+
         mAdapter = new AndroidFlavorCursorRecyclerViewAdapter(null);
         mRecyclerView.setAdapter(mAdapter);
         return rootView;
@@ -195,13 +166,16 @@ public class MainActivityFragment extends Fragment implements
         //}
 
         FragmentManager fm = getActivity().getSupportFragmentManager();
+
         mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
+        TabFragment1 mTabFragment1 = new TabFragment1();
 
         // If we haven't retained the worker fragment, then create it
         // and set this MainActivityFragment as the TaskFragment's target fragment.
         if (mTaskFragment == null) {
             mTaskFragment = new TaskFragment();
             mTaskFragment.setTargetFragment(this, 0);
+            //mTaskFragment.setTargetFragment(mTabFragment1, 1);
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
 
@@ -306,19 +280,26 @@ public class MainActivityFragment extends Fragment implements
                     public void onItemClick(int position, View v) {
                         Context context = v.getContext();
                         if (moviesInfo != null) {
-
+                            mIndex = position;
 
                             //IMAGE LOADED GOES HERE!! /////////////////////////
 
                             ////////////////////////////////////////////////////
 
-
-
+                            Bundle bundle = new Bundle();
+                            bundle.putParcelableArrayList("movie_Array_List_Extra", moviesInfo);
+                            bundle.putInt("position_extra", position);
                             Intent intent = new Intent(context, MovieActivity.class);
+                            intent.putExtras(bundle);
                             context.startActivity(intent);
                         }
                     }
                 });
+    }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+    public String getCurrentImage(){
+         return "http://image.tmdb.org/t/p/w342//s7OVVDszWUw79clca0durAIa6mw.jpg";
     }
 
     @Override
@@ -377,6 +358,7 @@ public class MainActivityFragment extends Fragment implements
          *
          */
         moviesInfo = movies;
+
         if (DEBUG) Log.i(LOG_TAG, "onPostExecute()");
         if (movies != null) {
             cur = getActivity().getContentResolver().query(FlavorsContract.FlavorEntry.CONTENT_URI,

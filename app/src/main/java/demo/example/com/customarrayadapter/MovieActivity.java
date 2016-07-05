@@ -1,8 +1,11 @@
 package demo.example.com.customarrayadapter;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,26 +16,43 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.ArrayList;
+
 import demo.example.com.customarrayadapter.adapter.PagerAdapter;
+import demo.example.com.customarrayadapter.contentviews.MainActivityFragment;
+import demo.example.com.customarrayadapter.contentviews.MainActivityFragment.onPassReferenceListener;
+
+import demo.example.com.customarrayadapter.contentviews.TabFragment1;
+import demo.example.com.customarrayadapter.contentviews.TaskFragment;
 import demo.example.com.customarrayadapter.customviews.CustomImageView;
+import demo.example.com.customarrayadapter.model.Movie;
+import demo.example.com.customarrayadapter.model.PassReference;
 
 
-public class MovieActivity extends AppCompatActivity {
+public class MovieActivity extends AppCompatActivity  {
         final static String EXTRA_NAME = "extra_name";
+    private static final String TAG_TASK_FRAGMENT = "task_fragment";
+    private TaskFragment mTaskFragment;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    private CustomImageView Aview;
-    private android.support.v4.app.Fragment frag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        Bundle bundle = getIntent().getExtras();
+
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+        //Bundle b = getIntent().getExtras();
+        //PassReference passReference =  b.getParcelable("name_of_extra");
+        //Log.d("LOG_TAG"," ** passed reference? " + passReference.getReference());
+
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
@@ -42,15 +62,20 @@ public class MovieActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Tab 5"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
+        FragmentManager fm = getSupportFragmentManager();
+
+        mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
+
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setClipToPadding(false);
         viewPager.setPageMargin(12);
         viewPager.setOffscreenPageLimit(4);
+        final MainActivityFragment fragment = new MainActivityFragment();
 
         final PagerAdapter adapter = new PagerAdapter
-                (getSupportFragmentManager(), tabLayout.getTabCount());
-
+                (getSupportFragmentManager(), tabLayout.getTabCount(), bundle);
         viewPager.setAdapter(adapter);
+
         try {
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,4 +193,5 @@ public class MovieActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
 }

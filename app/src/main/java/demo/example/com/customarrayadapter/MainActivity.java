@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final boolean DEBUG = true; // Set this to false to disable logs.
     private TabFragment1 mTabFragment1;
+    private int dummy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
