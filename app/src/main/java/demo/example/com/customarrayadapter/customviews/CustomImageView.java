@@ -21,18 +21,21 @@ package demo.example.com.customarrayadapter.customviews;
     import android.widget.TextView;
 
     import com.bumptech.glide.Glide;
+    import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
     import com.bumptech.glide.load.resource.drawable.GlideDrawable;
     import com.bumptech.glide.request.animation.GlideAnimation;
     import com.bumptech.glide.request.target.SimpleTarget;
     import com.bumptech.glide.request.target.ViewTarget;
 
+    import java.io.File;
+
     import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
     import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback.OnOrientationChangedListener;
 
-public class CustomImageView extends TextView implements
+public class CustomImageView extends View implements
                                 ImageLoadedCallback.OnImageLoadedListener {
 
-        private Drawable mDrawableLeft, mDrawableRight;
+        static private Drawable mDrawableLeft, mDrawableRight;
         private static final int mColumnCount = 2;
         private static int mCount = 0;
         private int mLheight, mRheight, wleft, wtop, leftMargin;
@@ -40,6 +43,7 @@ public class CustomImageView extends TextView implements
         private StaticLayout mTextLayout;
         private CharSequence mText;
         private Point mTextOrigin;
+        private Bitmap mBitmap;
 
         private OnOrientationChangedListener listener;
 
@@ -72,37 +76,26 @@ public class CustomImageView extends TextView implements
         return "{" + width + "," + height + "}";
     }
 
-    public Drawable getLeftDrawable(){
-        if (mDrawableLeft != null)
-            return mDrawableLeft;
-        else return null;
-    }
 
-    public Drawable getRightDrawable(){
-        if (mDrawableRight != null)
-            return mDrawableRight;
-        else return null;
-    }
+    public void setDrawable(Bitmap bitmap){
+        mDrawableLeft = new GlideBitmapDrawable(getResources(), bitmap);
+        mBitmap = bitmap;
+        Log.d("LOG","setdrawable:"+mBitmap);
 
-    public void setDrawable(Drawable drawable){
-        //mDrawableLeft = new BitmapDrawable(getResources(), bitmap);
-        mDrawableLeft = drawable;
+        //mDrawableLeft = drawable;
         updateContentBounds();
         invalidate();
     }
 
-    public void setRightDrawable(Bitmap bitmap){
-        mDrawableRight = new BitmapDrawable(getResources(), bitmap);
-        updateContentBounds();
-        invalidate();
+    public Bitmap getBitmap(){
+        return mBitmap;
     }
 
     public CustomImageView(Context context) {
-        this(context, null);
+        this(context, null,0);
         //if (!isInEditMode())
             initialize(context);
     }
-
     public CustomImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
         //if (!isInEditMode())
@@ -125,6 +118,7 @@ public class CustomImageView extends TextView implements
 
     public void updateContentBounds(){
         if (mDrawableLeft != null) {
+
             double ratio = (double) mDrawableLeft.getIntrinsicHeight() / mDrawableLeft.getIntrinsicWidth();
             int left = 0;
             int top = 0;
@@ -136,6 +130,7 @@ public class CustomImageView extends TextView implements
                     top,
                     w,
                     h);
+            Log.d("LOG","width: "+w+ " height: "+h);
             // Make sure the width and height are actual relevant dimensions before proceeding.
             if ((listener != null) &&
                             (w > 0) &&
@@ -156,18 +151,22 @@ public class CustomImageView extends TextView implements
 
         @Override
     protected void onDraw(Canvas canvas) {
-        //super.onDraw(canvas);
-        // Log.d("LOG", " ***********onDraw()");
+            super.onDraw(canvas);
+
         if (mDrawableLeft != null) {
             mDrawableLeft.draw(canvas);
         }
+        Log.d("LOG","bitrmapper:"+mBitmap);
+        //if (mBitmap != null) {
+        //    canvas.drawBitmap(mBitmap,0,0,null);
+        //}
 
-        if (mTextLayout != null){
-            canvas.save();
-            canvas.translate(mTextOrigin.x, mTextOrigin.y);
-            mTextLayout.draw(canvas);
-            canvas.restore();
-        }
+        //if (mTextLayout != null){
+        //    canvas.save();
+        //    canvas.translate(mTextOrigin.x, mTextOrigin.y);
+        //    mTextLayout.draw(canvas);
+        //    canvas.restore();
+        //}
 
         //if (mDrawableRight != null) {
         //    mDrawableRight.draw(canvas);

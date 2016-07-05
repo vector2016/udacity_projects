@@ -72,6 +72,10 @@ public class MovieActivity extends AppCompatActivity  {
         viewPager.setOffscreenPageLimit(4);
         final MainActivityFragment fragment = new MainActivityFragment();
 
+        /*
+        DO IMAGE CACHING HERE!! PASSING TO BUNDLE AS NORMAL
+         */
+
         final PagerAdapter adapter = new PagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount(), bundle);
         viewPager.setAdapter(adapter);

@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import demo.example.com.customarrayadapter.contentviews.TabFragment1;
@@ -17,8 +19,9 @@ import demo.example.com.customarrayadapter.contentviews.TabFragment3;
 import demo.example.com.customarrayadapter.contentviews.TabFragment4;
 import demo.example.com.customarrayadapter.contentviews.TabFragment5;
 import demo.example.com.customarrayadapter.model.Movie;
+import demo.example.com.customarrayadapter.contentviews.TabFragment1.Downloader;
 
-public class PagerAdapter extends SmartFragmentStatePagerAdapter  {
+public class PagerAdapter extends SmartFragmentStatePagerAdapter {
     int mNumOfTabs;
     Bundle bundle;
 
@@ -34,6 +37,8 @@ public class PagerAdapter extends SmartFragmentStatePagerAdapter  {
         switch (position) {
             case 0:
                 TabFragment1 tab1 = new TabFragment1();
+                //Downloader loader = new Downloader(Glide.with(tab1.getView().getContext()));
+                //loader.execute("url","url2","url3");
                 tab1.setArguments(bundle);
                 Log.d("LOG","** Tab1 ref:"+tab1);
                 return tab1;

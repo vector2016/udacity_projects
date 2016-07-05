@@ -2,18 +2,16 @@ package demo.example.com.customarrayadapter.contentviews;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -27,47 +25,37 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.BitmapEncoder;
-import com.bumptech.glide.load.resource.bitmap.BitmapResource;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.PreloadTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
-//import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.target.ViewTarget;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-import com.squareup.picasso.Transformation;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import demo.example.com.customarrayadapter.MainActivity;
-import demo.example.com.customarrayadapter.MovieActivity;
 import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.customviews.CustomImageView;
 import demo.example.com.customarrayadapter.customviews.MyLeadingMarginSpan2;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
-import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback.OnImageLoadedListener;
 import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback.OnOrientationChangedListener;
 import demo.example.com.customarrayadapter.model.Movie;
 
-public class TabFragment1 extends Fragment implements
-                            //OnImageLoadedListener,
-                            OnOrientationChangedListener,
-                            TaskFragment. TaskCallbacks {
+public class TabFragment1 extends Fragment {
     private static final int IMAGE_RATIO = 2;                    // This is the proportion of the custom view i.e IMAGE_SIZE = 2 is
                                                                 // half the size, IMAGE_SIZE = 4 is a quarter of the size etc.
     private static final int IMAGE_PADDING = 10;
@@ -89,10 +77,12 @@ public class TabFragment1 extends Fragment implements
     TextView messageView;
     View rootView;
     Context context;
+    String image,imageHeader;
     static Movie movie;
     ProgressBar progressBar;
     List<String> cachedImages = new ArrayList<>();
     List<SimpleTarget> targets = new ArrayList<>();
+    List <String> mKey = new ArrayList<>();
     private  FutureTarget<File> futureTarget;
     private ViewTarget<CustomImageView, GlideDrawable> viewTarget;
     private Thread mThread;
@@ -100,6 +90,8 @@ public class TabFragment1 extends Fragment implements
     private static Handler handler;
     private static File cacheFile;
     private int noCache = 0;
+    private Downloader mFileDownloaderTask;
+    private TabFragment1 tab;
 
     public void setArguments(Bundle args) {
         super.setArguments(args);
@@ -139,7 +131,6 @@ public class TabFragment1 extends Fragment implements
             ViewGroup parent = (ViewGroup) rootView.getParent();
             parent.removeView(rootView);
         }
-        //displayBitmap("http://image.tmdb.org/t/p/w342/" + movie.getPosterPath());
         return  rootView;
     }
 
@@ -165,53 +156,49 @@ public class TabFragment1 extends Fragment implements
         customView = (CustomImageView) rootView.findViewById(R.id.custom_view);
         RelativeLayout layout = (RelativeLayout) rootView.findViewById(R.id.info0);
         imageView =  (ImageView)  rootView.findViewById(R.id.text_image01);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
+        //progressBar = (ProgressBar) rootView.findViewById(R.id.loading);
 
         Log.d("LOG"," movie object sent from MainActivityFragment() :" + movie);
 
-        String image = "http://image.tmdb.org/t/p/w342/" + movie.getPosterPath();
-        String imageHeader = "http://image.tmdb.org/t/p/w342/" + movie.getBackdropPath();
+        image = "http://image.tmdb.org/t/p/w342/" + movie.getPosterPath();
+        imageHeader = "http://image.tmdb.org/t/p/w342/" + movie.getBackdropPath();
+
+        //mFileDownloaderTask = new Downloader(Glide.with(getContext()));
+        //mFileDownloaderTask.execute(imageHeader,image);
+
+        Result result = new Result();
+
+        result.key.put("0",image);
+        result.key.put("1", imageHeader);
 
 
-        FutureTarget<File> futureCache = Glide.with(getContext()).load(imageHeader).downloadOnly(500,500);
-        try {
-            File fileCache = futureCache.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
+        displayImages(result);
 
+        result.key.clear();
+        Log.d("LOG_TAG","onCreate()");
+    }
+
+    private void displayImages(Result result) {
         Glide.with(getContext())
-                    .load(image)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .preload();
-
-
-        Glide.with(getContext())
-                .load(futureCache)
-                //.diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(new ViewTarget<CustomImageView, GlideDrawable>( customView ) {
+                .load(result.key.get("1"))
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(new SimpleTarget<Bitmap>() {
                     @Override
-                    public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                        Log.d("LOG","** view **" + this.getView() + "** the image **" + resource.getCurrent());
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        customView.setDrawable(resource);
 
-                        this.view.setDrawable( resource.getCurrent() );
                     }
                 });
 
-
-
-        progressBar.setVisibility(View.VISIBLE);
-
         Glide.with(getContext())
-                .load(image)
+                .load(result.key.get("0"))
                 .asBitmap()
-                //.diskCacheStrategy(DiskCacheStrategy.ALL)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        customView.setOnOrientationChangedListener(new OnOrientationChangedListener() {
+                        customView.setOnOrientationChangedListener(new  OnOrientationChangedListener() {
                             /**
                              * On screen (orientation) rotation the ratio is re-calculated.
                              * @param width return the width of the custom view
@@ -220,6 +207,7 @@ public class TabFragment1 extends Fragment implements
 
                             @Override
                             public void onOrientationChanged(int width, int height) {
+                                Log.d("LOG","onOrientationChanged() :" + width);
                                 // Do something with bitmap here.
                                 mImage = new BitmapDrawable(getContext().getResources(), resource);
                                 imageView.setBackground(mImage);
@@ -234,7 +222,87 @@ public class TabFragment1 extends Fragment implements
                         });
                     }
                 });
+
+
     }
+
+    public class Downloader extends AsyncTask<String, File, Downloader.Result> {
+        private static final String TAG = "Downloader";
+        private final RequestManager glide;
+        public Downloader(RequestManager glide) {
+            this.glide = glide;
+        }
+
+        public void setActivity(RequestManager glide) {
+            //this.glide = glide;
+        }
+
+        @Override protected Result doInBackground(String... params) {
+
+            FutureTarget<File>[] requests;
+            requests = new FutureTarget[params.length];
+            // fire everything into Glide queue
+            for (int i = 0; i < params.length; i++) {
+                if (isCancelled()) {
+                    break;
+                }
+                requests[i] = glide
+                        .load(params[i])
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                ;
+            }
+            // wait for each item
+            Result result = new Result();
+            for (int i = 0; i < params.length; i++) {
+                if (isCancelled()) {
+                    for (int j = i; j < params.length; j++) {
+                        if (requests[i] != null) Glide.clear(requests[i]);
+                        result.failures.put(params[j], new CancellationException());
+                    }
+                    break;
+                }
+                try {
+                    File file = requests[i].get(10, TimeUnit.SECONDS);
+
+                    result.key.add(i, params[i]);
+                    result.success.put(params[i], file);
+                    Log.d(TAG,"params[i] ?" + params[i]);
+                    publishProgress(file);
+                } catch (Exception e) {
+                    result.failures.put(params[i], e);
+                } finally {
+                    Glide.clear(requests[i]);
+                }
+            }
+            return result;
+        }
+
+        @Override protected void onProgressUpdate(File... values) {
+            for (File file : values) {
+                Log.v(TAG, "Finished " + file);
+            }
+        }
+
+        @Override protected void onPostExecute(Result result) {
+            Log.i(TAG, String.format(Locale.ROOT, "Downloaded %d files, %d failed.",
+                    result.success.size(), result.failures.size()));
+            //displayImages(result);
+            result.key.clear();
+        }
+
+         class Result {
+            Map<String, File> success = new HashMap<>();
+            Map<String, Exception> failures = new HashMap<>();
+            List<String> key = new ArrayList<>();
+        }
+    }
+
+    class Result {
+        Map<String,String> key = new HashMap<>();
+    }
+
+
+
 
 
     public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener){
@@ -317,35 +385,14 @@ public class TabFragment1 extends Fragment implements
     }
 
     @Override
-    public void onOrientationChanged(int width, int height) {
-        Log.d("LOG","*** onOrientationChanged()");
+    public void onDestroy() {
+        super.onDestroy();
+        //mFileDownloaderTask.cancel(true);
+        Log.d("LOG_TAG","onDestroy()");
     }
 
-    @Override
-    public void onPreExecute() {
-
-    }
-
-    @Override
-    public void onProgressUpdate(int percent) {
-
-    }
-
-    @Override
-    public void onCancelled() {
-
-    }
-
-    @Override
-    public void onPostExecute(ArrayList<Movie> movies, Cursor c) {
-        Log.d("LOG","onPostExecute( .......)" + movies);
-    }
-
-    public class MovieImage {
-        private String image = "http://image.tmdb.org/t/p/w342//s7OVVDszWUw79clca0durAIa6mw.jpg";
-
-        public String getImage() {
-            return image;
-        }
-    }
+    //@Override
+    //public void onOrientationChanged(int width, int height) {
+    //    Log.d("LOG","*** onOrientationChanged()");
+    //}
 }
