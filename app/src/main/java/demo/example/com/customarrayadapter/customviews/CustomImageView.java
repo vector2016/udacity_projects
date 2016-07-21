@@ -35,7 +35,7 @@ package demo.example.com.customarrayadapter.customviews;
 public class CustomImageView extends View implements
                                 ImageLoadedCallback.OnImageLoadedListener {
 
-        static private Drawable mDrawableLeft, mDrawableRight;
+        private GlideBitmapDrawable mDrawableLeft, mDrawableRight;
         private static final int mColumnCount = 2;
         private static int mCount = 0;
         private int mLheight, mRheight, wleft, wtop, leftMargin;
@@ -79,6 +79,7 @@ public class CustomImageView extends View implements
 
     public void setDrawable(Bitmap bitmap){
         mDrawableLeft = new GlideBitmapDrawable(getResources(), bitmap);
+        //mDrawableLeft   = bitmap;
         mBitmap = bitmap;
         Log.d("LOG","setdrawable:"+mBitmap);
 
@@ -125,7 +126,7 @@ public class CustomImageView extends View implements
             int w = left + getWidth();
             int h = (int) (top + (getWidth() * ratio));
             mLheight = h;
-            //mDrawableLeft.setColorFilter(0xffff0000, PorterDuff.Mode.LIGHTEN);
+            mDrawableLeft.setColorFilter(0x0aff0e00, PorterDuff.Mode.LIGHTEN);
             mDrawableLeft.setBounds(left,
                     top,
                     w,
@@ -135,42 +136,23 @@ public class CustomImageView extends View implements
             if ((listener != null) &&
                             (w > 0) &&
                             (h > 0)) {
-                listener.onOrientationChanged(w, h);
+                listener.onOrientationChanged(w, h,"");
             }
         }
     }
-        public void setTextLayout(String text){
-            mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-            mTextPaint.setTextSize(16);
-            mText = text;
-            float textWidth = mTextPaint.measureText(mText, 0, mText.length()/3);
-            mTextLayout = new StaticLayout(mText, mTextPaint, (int)textWidth,
+    public void setTextLayout(String text){
+        mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setTextSize(16);
+        mText = text;
+        float textWidth = mTextPaint.measureText(mText, 0, mText.length()/3);
+        mTextLayout = new StaticLayout(mText, mTextPaint, (int)textWidth,
                     Layout.Alignment.ALIGN_CENTER, 1f, 0f, true);
-        }
-
-
-        @Override
+    }
+    @Override
     protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-
-        if (mDrawableLeft != null) {
+          if (mDrawableLeft != null) {
             mDrawableLeft.draw(canvas);
         }
-        Log.d("LOG","bitrmapper:"+mBitmap);
-        //if (mBitmap != null) {
-        //    canvas.drawBitmap(mBitmap,0,0,null);
-        //}
-
-        //if (mTextLayout != null){
-        //    canvas.save();
-        //    canvas.translate(mTextOrigin.x, mTextOrigin.y);
-        //    mTextLayout.draw(canvas);
-        //    canvas.restore();
-        //}
-
-        //if (mDrawableRight != null) {
-        //    mDrawableRight.draw(canvas);
-        //}
     }
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {

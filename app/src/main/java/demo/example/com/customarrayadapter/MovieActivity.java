@@ -1,33 +1,20 @@
 package demo.example.com.customarrayadapter;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import java.util.ArrayList;
-
 import demo.example.com.customarrayadapter.adapter.PagerAdapter;
 import demo.example.com.customarrayadapter.contentviews.MainActivityFragment;
-import demo.example.com.customarrayadapter.contentviews.MainActivityFragment.onPassReferenceListener;
-
-import demo.example.com.customarrayadapter.contentviews.TabFragment1;
 import demo.example.com.customarrayadapter.contentviews.TaskFragment;
-import demo.example.com.customarrayadapter.customviews.CustomImageView;
-import demo.example.com.customarrayadapter.model.Movie;
-import demo.example.com.customarrayadapter.model.PassReference;
-
 
 public class MovieActivity extends AppCompatActivity  {
         final static String EXTRA_NAME = "extra_name";
@@ -49,10 +36,6 @@ public class MovieActivity extends AppCompatActivity  {
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
-        //Bundle b = getIntent().getExtras();
-        //PassReference passReference =  b.getParcelable("name_of_extra");
-        //Log.d("LOG_TAG"," ** passed reference? " + passReference.getReference());
-
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
@@ -69,7 +52,7 @@ public class MovieActivity extends AppCompatActivity  {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setClipToPadding(false);
         viewPager.setPageMargin(12);
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(5);
         final MainActivityFragment fragment = new MainActivityFragment();
 
         /*
@@ -77,7 +60,7 @@ public class MovieActivity extends AppCompatActivity  {
          */
 
         final PagerAdapter adapter = new PagerAdapter
-                (getSupportFragmentManager(), tabLayout.getTabCount(), bundle);
+                (getApplicationContext(), getSupportFragmentManager(), tabLayout.getTabCount(), bundle);
         viewPager.setAdapter(adapter);
 
         try {
@@ -98,7 +81,7 @@ public class MovieActivity extends AppCompatActivity  {
             @Override
             public void onPageSelected(int position) {
                 //mActionBar.setSelectedNavigationItem(position);
-                Log.d("Log","** onPageSelected() " + position);
+                viewPager.getAdapter().notifyDataSetChanged();
             }
 
             @Override
@@ -116,7 +99,6 @@ public class MovieActivity extends AppCompatActivity  {
                 }
                 Log.d("LOG","*** onPageScrollStateChanged: " + mState);
             }
-
         });
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -157,6 +139,7 @@ public class MovieActivity extends AppCompatActivity  {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void onStart() {

@@ -9,8 +9,13 @@
 
     <string name="most_popular"> Most Popular</string>
     <string name="highest_rated">Highest Rated</string>
+    <string name="movie_date">Year:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2016</string>
+  <string name="movie_rating">IMDB:&#160;&#160;&#160;&#160;&#160;&#160;7.1/10</string>
+    <string name="movie_duration">Duration:&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;120min</string>
+    <string name="favorites">FAVORITES</string>
 
     <string name="menu_settings">Settings</string>
+    <string name="movie_release">2016</string>
 
      <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
     cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian

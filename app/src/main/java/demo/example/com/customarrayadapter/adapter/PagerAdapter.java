@@ -1,17 +1,8 @@
 package demo.example.com.customarrayadapter.adapter;
-
-//import android.support.v4.app.Fragment;
-import android.app.Fragment;
-
-//import android.support.v4.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
-
-import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
 
 import demo.example.com.customarrayadapter.contentviews.TabFragment1;
 import demo.example.com.customarrayadapter.contentviews.TabFragment2;
@@ -22,23 +13,24 @@ import demo.example.com.customarrayadapter.model.Movie;
 import demo.example.com.customarrayadapter.contentviews.TabFragment1.Downloader;
 
 public class PagerAdapter extends SmartFragmentStatePagerAdapter {
-    int mNumOfTabs;
-    Bundle bundle;
+    private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w342/";
+    private int mNumOfTabs;
+    private Bundle bundle;
+    private Context context;
 
-    public PagerAdapter(FragmentManager fm, int NumOfTabs, Bundle bundle) {
+
+    public PagerAdapter(Context context, FragmentManager fm, int NumOfTabs, Bundle bundle) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
         this.bundle = bundle;
+        this.context = context;
     }
 
     @Override
     public android.support.v4.app.Fragment getItem(int position) {
-
         switch (position) {
             case 0:
                 TabFragment1 tab1 = new TabFragment1();
-                //Downloader loader = new Downloader(Glide.with(tab1.getView().getContext()));
-                //loader.execute("url","url2","url3");
                 tab1.setArguments(bundle);
                 Log.d("LOG","** Tab1 ref:"+tab1);
                 return tab1;
@@ -62,6 +54,12 @@ public class PagerAdapter extends SmartFragmentStatePagerAdapter {
                 return null;
         }
     }
+    @Override
+    public int getItemPosition(Object object) {
+        Log.d("LOG","Object() :" + object);
+        return POSITION_NONE;
+    }
+
     @Override
     public float getPageWidth (int position) {
         return 0.93f;

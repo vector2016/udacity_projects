@@ -6,6 +6,6 @@ public class OrientationLoadedCallback{
  * task's progress and results back to the Fragment.
  */
     public interface OnOrientationChangedListener {
-        void onOrientationChanged(int width, int height);
+        void onOrientationChanged(int width, int height, String dim );
     }
 }

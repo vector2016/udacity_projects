@@ -2,6 +2,7 @@ package demo.example.com.customarrayadapter.customviews;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.text.Layout;
 import android.text.style.LeadingMarginSpan;
 
@@ -36,7 +37,9 @@ public class MyLeadingMarginSpan2  implements LeadingMarginSpan.LeadingMarginSpa
     @Override
     public void drawLeadingMargin(Canvas c, Paint p, int x, int dir,
                                   int top, int baseline, int bottom, CharSequence text,
-                                  int start, int end, boolean first, Layout layout) {}
+                                  int start, int end, boolean first, Layout layout) {
+
+    }
 
     /*
      * Возвращает количество строк, к которым должен быть применен
@@ -47,4 +50,4 @@ public class MyLeadingMarginSpan2  implements LeadingMarginSpan.LeadingMarginSpa
     public int getLeadingMarginLineCount() {
         return lines;
     }
-};
+}
