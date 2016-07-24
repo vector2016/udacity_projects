@@ -17,6 +17,7 @@ public class FlavorsContract{
 		public static final String TABLE_FLAVORS = "flavor";
 		// columns
 		public static final String _ID = "_id";
+		public static final String COLUMN_MOVIE_ID = "movie_id"; // long
 		public static final String COLUMN_ICON = "icon";
 		public static final String COLUMN_DESCRIPTION = "description";
 		public static final String COLUMN_VERSION_NAME = "version_name";
@@ -59,6 +60,7 @@ public class FlavorsContract{
 		public static final String TABLE_FAVORITES = "favorites";
 		// columns
 		public static final String _ID = "_id";
+		public static final String COLUMN_MOVIE_ID = "movie_id"; // long
 		public static final String COLUMN_ICON = "icon";
 		public static final String COLUMN_DESCRIPTION = "description";
 		public static final String COLUMN_VERSION_NAME = "version_name";

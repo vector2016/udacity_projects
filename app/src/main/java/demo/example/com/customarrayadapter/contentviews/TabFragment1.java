@@ -243,6 +243,8 @@ public class TabFragment1 extends Fragment
         values.put(FlavorsContract.FavoritesEntry.COLUMN_POSTER_PATH,
                 "http://image.tmdb.org/t/p/w342/" + movie.getPosterPath());
         int isAdult = movie.isAdult() ? 1 : 0;
+        values.put(FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID,
+                movie.getId());
         values.put(FlavorsContract.FavoritesEntry.COLUMN_ADULT,
                 isAdult);
         values.put(FlavorsContract.FavoritesEntry.COLUMN_OVERVIEW,

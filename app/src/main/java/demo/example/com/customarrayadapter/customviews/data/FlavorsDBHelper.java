@@ -11,7 +11,7 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 
 	//name & version
 	private static final String DATABASE_NAME = "flavors.db";
-	private static final int DATABASE_VERSION = 44;
+	private static final int DATABASE_VERSION = 46;
 
 	public FlavorsDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -23,6 +23,8 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 		final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " +
 				FlavorsContract.FlavorEntry.TABLE_FLAVORS + "(" + FlavorsContract.FlavorEntry._ID +
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID +
+				" INTEGER, " +
 				FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME +
 				" TEXT, " +
 				FlavorsContract.FlavorEntry.COLUMN_ICON +
@@ -59,6 +61,8 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 		final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " +
 				FlavorsContract.FavoritesEntry.TABLE_FAVORITES + "(" + FlavorsContract.FavoritesEntry._ID +
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_MOVIE_ID +
+				" INTEGER, " +
 				FlavorsContract.FavoritesEntry.COLUMN_VERSION_NAME +
 				" TEXT, " +
 				FlavorsContract.FavoritesEntry.COLUMN_ICON +

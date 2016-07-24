@@ -193,6 +193,8 @@ public class MainActivityFragment extends Fragment implements
         // in the array of ContentValues
         for (int i = 0; i < movies.size(); i++) {
             tasteValuesArr[i] = new ContentValues();
+            tasteValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID,
+                    movies.get(i).getId());
             tasteValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_POSTER_PATH,
                     "http://image.tmdb.org/t/p/w342/" + movies.get(i).getPosterPath());
             int isAdult = movies.get(i).isAdult() ? 1 : 0;
