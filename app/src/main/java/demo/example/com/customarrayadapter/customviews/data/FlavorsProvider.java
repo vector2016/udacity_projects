@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-
+// STARTS IN ANDROIDMANIFEST.XML
 public class FlavorsProvider extends ContentProvider {
 	private static final String LOG_TAG = FlavorsProvider.class.getSimpleName();
 	private static final UriMatcher sUriMatcher = buildUriMatcher();
@@ -19,25 +19,41 @@ public class FlavorsProvider extends ContentProvider {
 	// Codes for the UriMatcher //////
 	private static final int FLAVOR = 100;
 	private static final int FLAVOR_WITH_ID = 200;
+	private static final int FAVORITES = 300;
+	private static final int FAVORITES_WITH_ID = 400;
 	////////
 
 	private static UriMatcher buildUriMatcher(){
 		// Build a UriMatcher by adding a specific code to return based on a match
 		// It's common to use NO_MATCH as the code for this case.
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+
+
 		final String authority = FlavorsContract.CONTENT_AUTHORITY;
 
 		// add a code for each type of URI you want
+
+		// CONTENT_AUTHORITY = "demo.example.com.customarrayadapter.app";
+		// TABLE_FLAVORS = "flavor";
+		// FLAVOR = 100;
+		// EG, demo.example.com.customarrayadapter.app/flavor/100
 		matcher.addURI(authority, FlavorsContract.FlavorEntry.TABLE_FLAVORS, FLAVOR);
+
+		// CONTENT_AUTHORITY = "demo.example.com.customarrayadapter.app";
+		// TABLE_FLAVORS = "flavor/#";
+		// FLAVOR_WITH_ID = 200;
+		// EG, demo.example.com.customarrayadapter.app/flavor/#/200
 		matcher.addURI(authority, FlavorsContract.FlavorEntry.TABLE_FLAVORS + "/#", FLAVOR_WITH_ID);
 
+		matcher.addURI(authority, FlavorsContract.FavoritesEntry.TABLE_FAVORITES, FAVORITES);
+		matcher.addURI(authority, FlavorsContract.FavoritesEntry.TABLE_FAVORITES + "/#", FAVORITES_WITH_ID);
 		return matcher;	
 	}
 
 	@Override
 	public boolean onCreate(){
 		mOpenHelper = new FlavorsDBHelper(getContext());
-
 		return true;
 	}
 
@@ -47,9 +63,11 @@ public class FlavorsProvider extends ContentProvider {
 		Log.d(LOG_TAG,"***uri: "+uri);
 		switch (match){
 			case FLAVOR:{
+				Log.d(LOG_TAG,"getType - FLAVOR");
 				return FlavorsContract.FlavorEntry.CONTENT_DIR_TYPE;
 			}
-			case FLAVOR_WITH_ID:{ 
+			case FLAVOR_WITH_ID:{
+				Log.d(LOG_TAG,"getType - FLAVOR_WITH_ID");
 				return FlavorsContract.FlavorEntry.CONTENT_ITEM_TYPE;
 			}
 			default:{
@@ -57,6 +75,11 @@ public class FlavorsProvider extends ContentProvider {
 			}
 		}
 	}
+	/*
+	Note:
+			These function are called from MainActivityFragment.
+
+	 */
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder){ // uri: ref db,
@@ -76,6 +99,7 @@ public class FlavorsProvider extends ContentProvider {
 						null,
 						sortOrder);
 				retCursor.setNotificationUri(getContext().getContentResolver(),uri);
+				Log.d(LOG_TAG,"query - FLAVOR");
 				return retCursor;
 			}
 			// Individual flavor based on Id selected
@@ -89,6 +113,7 @@ public class FlavorsProvider extends ContentProvider {
 						null,
 						sortOrder);
 				retCursor.setNotificationUri(getContext().getContentResolver(),uri);
+				Log.d(LOG_TAG,"query - FLAVOR_WITH_ID");
 				return retCursor;
 			}
 			default:{
@@ -111,9 +136,22 @@ public class FlavorsProvider extends ContentProvider {
 				} else {
 					throw new android.database.SQLException("Failed to insert row into: " + uri);
 				}
+				Log.d(LOG_TAG,"insert - FLAVOR");
+
 				break;
 			}
+			case FAVORITES: {
+				long _id = db.insert(FlavorsContract.FavoritesEntry.TABLE_FAVORITES, null, values);
+				// insert unless it is already contained in the database
+				if (_id > 0) {
+					returnUri = FlavorsContract.FavoritesEntry.buildFavoritesUri(_id);
+				} else {
+					throw new android.database.SQLException("Failed to insert row into: " + uri);
+				}
+				Log.d(LOG_TAG,"insert - FAVORITES " + _id);
 
+				break;
+			}
 			default: {
 				throw new UnsupportedOperationException("Unknown uri: " + uri);
 
@@ -135,6 +173,8 @@ public class FlavorsProvider extends ContentProvider {
 				// reset _ID
 				db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
 						FlavorsContract.FlavorEntry.TABLE_FLAVORS + "'");
+				Log.d(LOG_TAG,"delete - FLAVOR");
+
 				break;
 			case FLAVOR_WITH_ID:
 				numDeleted = db.delete(FlavorsContract.FlavorEntry.TABLE_FLAVORS,
@@ -143,7 +183,7 @@ public class FlavorsProvider extends ContentProvider {
 				// reset _ID
 				db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" + 
 						FlavorsContract.FlavorEntry.TABLE_FLAVORS + "'");
-
+				Log.d(LOG_TAG,"delete - FLAVOR_WITH_ID");
 				break;
 			default:
 				throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -197,8 +237,11 @@ public class FlavorsProvider extends ContentProvider {
 					// was a change
 					getContext().getContentResolver().notifyChange(uri, null);
 				}
+				Log.d(LOG_TAG,"bulkInsert - FLAVOR");
+
 				return numInserted;
 			default:
+				Log.d(LOG_TAG,"bulkInsert (default) - FLAVOR");
 				return super.bulkInsert(uri, values);
 		}
 	}
@@ -218,6 +261,8 @@ public class FlavorsProvider extends ContentProvider {
 						contentValues,
 						selection,
 						selectionArgs);
+				Log.d(LOG_TAG,"update - FLAVOR");
+
 				break;
 			}
 			case FLAVOR_WITH_ID: {
@@ -225,6 +270,8 @@ public class FlavorsProvider extends ContentProvider {
 						contentValues,
 						FlavorsContract.FlavorEntry._ID + " = ?",
 						new String[] {String.valueOf(ContentUris.parseId(uri))});
+				Log.d(LOG_TAG,"update - FLAVOR_WITH_ID");
+
 				break;
 			}
 			default:{

@@ -13,6 +13,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import demo.example.com.customarrayadapter.adapter.PagerAdapter;
+import demo.example.com.customarrayadapter.adapter.SmartFragmentStatePagerAdapter;
 import demo.example.com.customarrayadapter.contentviews.MainActivityFragment;
 import demo.example.com.customarrayadapter.contentviews.TaskFragment;
 
@@ -20,6 +21,7 @@ public class MovieActivity extends AppCompatActivity  {
         final static String EXTRA_NAME = "extra_name";
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
     private TaskFragment mTaskFragment;
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -55,10 +57,6 @@ public class MovieActivity extends AppCompatActivity  {
         viewPager.setOffscreenPageLimit(5);
         final MainActivityFragment fragment = new MainActivityFragment();
 
-        /*
-        DO IMAGE CACHING HERE!! PASSING TO BUNDLE AS NORMAL
-         */
-
         final PagerAdapter adapter = new PagerAdapter
                 (getApplicationContext(), getSupportFragmentManager(), tabLayout.getTabCount(), bundle);
         viewPager.setAdapter(adapter);
@@ -68,7 +66,6 @@ public class MovieActivity extends AppCompatActivity  {
             e.printStackTrace();
         }
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        //NOTE: Added another addOnPageChangeListener
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -80,6 +77,15 @@ public class MovieActivity extends AppCompatActivity  {
 
             @Override
             public void onPageSelected(int position) {
+                /**
+                 *
+
+                    NOTE:
+                    Fix notifyDataSetChanged() to a more performant alternative later.
+                 *
+                 */
+
+
                 //mActionBar.setSelectedNavigationItem(position);
                 viewPager.getAdapter().notifyDataSetChanged();
             }

@@ -3,6 +3,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="content_authority">demo.example.com.customarrayadapter.app</string>
+    <string name="saved_to_favorites">Saved to favorites!!</string>
     <string name="task_started_msg">Task Started!!</string>
     <string name="task_cancelled_msg">Task Cancelled!!</string>
     <string name="task_complete_msg">Task Complete!!</string>

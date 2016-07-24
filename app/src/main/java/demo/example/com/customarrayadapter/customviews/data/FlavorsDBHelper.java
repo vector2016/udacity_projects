@@ -17,27 +17,7 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
-	/*
-		//public static final String RESULTS = "results"; // array of objects
-		public static final String COLUMN_POSTER_PATH = "poster_path";       // string
-		public static final String COLUMN_ADULT = "adult";           //boolean
-		public static final String COLUMN_OVERVIEW = "overview";  // string
-		public static final String COLUMN_RELEASE_DATE = "release_date"; // string; date
-
-		//public static final String ID = "id";     //long
-		public static final String COLUMN_ORIGINAL_TITLE = "original_title"; //String
-		public static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";   //string
-		public static final String COLUMN_TITLE = "title"; //string
-		public static final String COLUMN_BACKDROP_PATH = "backdrop_path";// string
-		public static final String COLUMN_POPULARITY = "popularity";
-		public static final String COLUMN_VOTE_COUNT = "vote_count"; //int
-		public static final String COLUMN_VIDEO = "video"; // boolean
-		public static final String COLUMN_VOTE_AVERAGE = "vote_average"; // float
-
-	 */
-
 	// Create the databas
-
 	@Override
 	public void onCreate(SQLiteDatabase sqLiteDatabase) {
 		final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " +
@@ -76,8 +56,46 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 				FlavorsContract.FlavorEntry.COLUMN_VOTE_AVERAGE +
 				" FLOAT" + ");";
 
+		final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " +
+				FlavorsContract.FavoritesEntry.TABLE_FAVORITES + "(" + FlavorsContract.FavoritesEntry._ID +
+				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_VERSION_NAME +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_ICON +
+				" INTEGER, " +
+				FlavorsContract.FavoritesEntry.COLUMN_DESCRIPTION +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_FILM_POSTER +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_POSTER_PATH +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_ADULT +
+				" INTEGER, " +
+				FlavorsContract.FavoritesEntry.COLUMN_OVERVIEW +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_RELEASE_DATE +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_ORIGINAL_TITLE +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_ORIGINAL_LANGUAGE +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_TITLE +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_BACKDROP_PATH +
+				" TEXT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_POPULARITY +
+				" FLOAT, " +
+				FlavorsContract.FavoritesEntry.COLUMN_VOTE_COUNT +
+				" INTEGER, " +
+				FlavorsContract.FavoritesEntry.COLUMN_VIDEO +
+				" INTEGER, " +
+				FlavorsContract.FavoritesEntry.COLUMN_VOTE_AVERAGE +
+				" FLOAT" + ");";
+
 
 		sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
+		sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
+
 
 		final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " +
 				FlavorsContract.TasteEntry.TABLE_TASTE + "(" + FlavorsContract.TasteEntry._ID +
@@ -89,30 +107,6 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 
 		//sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
 	}
-
-
-	/*
-	@Override
-	public void onCreate(SQLiteDatabase sqLiteDatabase) {
-		final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " +
-				FlavorsContract.FlavorEntry.TABLE_FLAVORS + "(" + FlavorsContract.FlavorEntry._ID +
-				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME +
-				" TEXT NOT NULL, " +
-				FlavorsContract.FlavorEntry.COLUMN_ICON +
-				" INTEGER NOT NULL, " +
-				FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION +
-				" TEXT NOT NULL, " +
-				FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER +
-				" TEXT NOT NULL " +
-
-
-				");";
-
-		sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
-	}
-	*/
-
 	// Upgrade database when version is changed.
 	@Override
 	public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
@@ -122,6 +116,10 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FlavorsContract.FlavorEntry.TABLE_FLAVORS);
         sqLiteDatabase.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
                 FlavorsContract.FlavorEntry.TABLE_FLAVORS + "'");
+
+		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FlavorsContract.FavoritesEntry.TABLE_FAVORITES);
+		sqLiteDatabase.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+				FlavorsContract.FavoritesEntry.TABLE_FAVORITES + "'");
 
 		// re-create database
 		onCreate(sqLiteDatabase);

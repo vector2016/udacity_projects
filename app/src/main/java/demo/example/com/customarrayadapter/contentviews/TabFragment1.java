@@ -2,6 +2,7 @@ package demo.example.com.customarrayadapter.contentviews;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -53,6 +55,7 @@ import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.customviews.CustomImageView;
 import demo.example.com.customarrayadapter.customviews.FutureStudioView;
 import demo.example.com.customarrayadapter.customviews.MyLeadingMarginSpan2;
+import demo.example.com.customarrayadapter.customviews.data.FlavorsContract;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
 import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback;
 import demo.example.com.customarrayadapter.model.Movie;
@@ -62,40 +65,21 @@ public class TabFragment1 extends Fragment {
                                                                 // half the size, IMAGE_SIZE = 4 is a quarter of the size etc.
     private static final int IMAGE_PADDING = 10;
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w342/";
-    ImageLoadedCallback listener;
-    //FutureStudioView customView;
     Drawable mImage;
     Bitmap mBitmap;
     Button favoritesButton;
-    String mBitmapImage;
-    String overView;
-    SpannableString ss;
-    int mWidth,
-        mHeight,
-        leftMargin,
+    ImageView imageView;
+    int leftMargin,
         finalHeight,
         finalWidth;
     double aspectRatio;
-    ImageView imageView, imageView0 ;
-    ImageView image_top;
     TextView messageView, dateView, ratingsView, durationView;
     View rootView;
     Context context;
     String image,imageHeader;
    static Movie movie;
-    ProgressBar progressBar;
-    List<String> cachedImages = new ArrayList<>();
-    List<SimpleTarget> targets = new ArrayList<>();
-    List <String> mKey = new ArrayList<>();
-    private  FutureTarget<File> futureTarget;
-    private ViewTarget<CustomImageView, GlideDrawable> viewTarget;
-    private Thread mThread;
-    private static String mImageHeader;
-    private static Handler handler;
-    private static File cacheFile;
-    private int noCache = 0;
+
     private Downloader mFileDownloaderTask;
-    private TabFragment1 tab;
     private FutureStudioView customView;
 
     public void setArguments(Bundle args) {
@@ -104,9 +88,6 @@ public class TabFragment1 extends Fragment {
         int position = args.getInt("position_extra",0);
         assert movieList != null;
         movie = movieList.get(position);
-
-
-        // now adjust what ever you want to display
     }
 
     @Override
@@ -167,7 +148,6 @@ public class TabFragment1 extends Fragment {
         favoritesButton = (Button) rootView.findViewById(R.id.favorites_button);
         //imageView0 =  (ImageView)  rootView.findViewById(R.id.text_image02);
 
-        Log.d("LOG"," movie object sent from MainActivityFragment() :" + movie);
 
         image =  IMAGE_URL + movie.getPosterPath();
         imageHeader = IMAGE_URL + movie.getBackdropPath();
@@ -182,7 +162,6 @@ public class TabFragment1 extends Fragment {
 
         displayImages(result);
         result.key.clear();
-        Log.d("LOG_TAG","onCreate()");
     }
 
     ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {
@@ -223,7 +202,6 @@ public class TabFragment1 extends Fragment {
     };
 
     private void displayImages(final Result result) {
-
         Glide.with(getContext())
                 .load(image)
                 .asBitmap()
@@ -238,10 +216,20 @@ public class TabFragment1 extends Fragment {
                             public void onOrientationChanged(int width, int height, String screenDim) {
                                 mImage = new BitmapDrawable(getContext().getResources(), resource);
                                 imageView.setImageDrawable(mImage);
-                                dateView.setText(R.string.movie_date);
                                 durationView.setText(R.string.movie_duration);
-                                ratingsView.setText(R.string.movie_rating);
+                                dateView.setText(movie.getReleaseDate().substring(0, movie.getReleaseDate().indexOf('-')));
+                                dateView.setTextSize(getResources().getDimension(R.dimen.textsize));
+
+                                String votes = String.format("Votes %s / 10", movie.getVoteAverage().toString() );
+                                ratingsView.setText(votes);
                                 favoritesButton.setText(R.string.favorites);
+                                favoritesButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Toast.makeText(getActivity(), R.string.saved_to_favorites, Toast.LENGTH_SHORT).show();
+                                        insertItem();
+                                    }
+                                });
                                 aspectRatio = (double) mImage.getIntrinsicHeight() / mImage.getIntrinsicWidth();  // Use intrinsic dimensions to find the height of the image
                                 finalWidth = (width)/ IMAGE_RATIO;                                                // The second image is half the width of the header image
                                 leftMargin = finalWidth + IMAGE_PADDING;                                    // padding (left margin) for image
@@ -254,6 +242,39 @@ public class TabFragment1 extends Fragment {
                         });
                     }
                 });
+    }
+    public void insertItem(){
+        ContentValues values  = new ContentValues();
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_POSTER_PATH,
+                "http://image.tmdb.org/t/p/w342/" + movie.getPosterPath());
+        int isAdult = movie.isAdult() ? 1 : 0;
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_ADULT,
+                isAdult);
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_OVERVIEW,
+                movie.getOverview());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_RELEASE_DATE,
+                movie.getReleaseDate());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_ORIGINAL_TITLE,
+                movie.getOriginalTitle());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_ORIGINAL_LANGUAGE,
+                movie.getOriginalLanguage());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_TITLE,
+                movie.getTitle());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_BACKDROP_PATH,
+                "http://image.tmdb.org/t/p/w342/" + movie.getBackdropPath());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_POPULARITY,
+                movie.getPopularity());
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_VOTE_COUNT,
+                movie.getVoteCount());
+        int isVideo = movie.isVideo() ? 1 : 0;
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_VIDEO,
+                isVideo);
+        values.put(FlavorsContract.FavoritesEntry.COLUMN_VOTE_AVERAGE,
+                movie.getVoteAverage());
+
+        // bulkInsert our ContentValues array
+        getActivity().getContentResolver().insert(FlavorsContract.FavoritesEntry.CONTENT_URI,
+                values);
     }
 
     public class Downloader extends AsyncTask<String, File, Downloader.Result> {
@@ -348,8 +369,8 @@ public class TabFragment1 extends Fragment {
                 "So what I do is I set left margin of the wrapping TextView's LayoutParams to the desired indent, and I set the text into TextView. Then I add OnGlobalLayoutListener, and inside onGlobalLayout callback, I count the position of the last character on the last line to the right of the image.";
 
 
-        String plainTextToSearch=getResources().getString(R.string.text_sample);
-        //String plainTextToSearch=mText;
+        //String plainTextToSearch=getResources().getString(R.string.text_sample);
+        String plainTextToSearch=movie.getOverview();
 
         Spanned htmlText = Html.fromHtml(plainTextToSearch);
         SpannableString mSpannableString= new SpannableString(htmlText);
@@ -383,9 +404,15 @@ public class TabFragment1 extends Fragment {
 
         //float textLineHeight = mTextView.getPaint().getTextSize();
         float fontSpacing = messageView.getPaint().getFontSpacing();
+
         int height = bounds.bottom + bounds.height();
         //lines = (int) (finalHeight/(height)) + 1;
-        lines = (int) ( (finalHeight/(fontSpacing)) / 2.0) + 1;
+        /*
+            NOTE:
+            Add heights of textViews to fontspacing to make text flush with image. Eg
+            add date, duration, ratings and favorite
+         */
+        lines = (int) ( (finalHeight/(fontSpacing))  + 1) - 7;
         /**
          * Build the layout with LeadingMarginSpan2
          */
@@ -393,6 +420,8 @@ public class TabFragment1 extends Fragment {
 
         MyLeadingMarginSpan2 span = new MyLeadingMarginSpan2(lines, finalWidth + 15  );
         mSpannableString.setSpan(span, allTextStart, allTextEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //messageView.setTextSize(getResources().getDimension(R.dimen.smalltextsize));
+
         messageView.setText(mSpannableString);
     }
     public void bounds(Rect bound){

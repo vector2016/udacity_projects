@@ -9,7 +9,9 @@
     <dimen name="favorites_button_right_padding">50sp</dimen>
     <dimen name="text_view_duration_right_padding">10sp</dimen>
     <dimen name="text_view_ratings_right_padding">45sp</dimen>
+    <dimen name="textsize">15sp</dimen>
 
+    <dimen name="smalltextsize">5sp</dimen>
 
     <!-- dimensions for my MovieDetailActivity -->
     <dimen name="detail_backdrop_height">256dp</dimen>
