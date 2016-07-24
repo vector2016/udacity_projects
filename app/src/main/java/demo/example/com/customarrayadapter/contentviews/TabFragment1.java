@@ -60,7 +60,8 @@ import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
 import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback;
 import demo.example.com.customarrayadapter.model.Movie;
 
-public class TabFragment1 extends Fragment {
+public class TabFragment1 extends Fragment
+                            implements View.OnClickListener {
     private static final int IMAGE_RATIO = 2;                    // This is the proportion of the custom view i.e IMAGE_SIZE = 2 is
                                                                 // half the size, IMAGE_SIZE = 4 is a quarter of the size etc.
     private static final int IMAGE_PADDING = 10;
@@ -146,6 +147,7 @@ public class TabFragment1 extends Fragment {
         durationView = (TextView) rootView.findViewById(R.id.duration_view);
         ratingsView = (TextView) rootView.findViewById(R.id.ratings_view);
         favoritesButton = (Button) rootView.findViewById(R.id.favorites_button);
+        favoritesButton.setOnClickListener(this);
         //imageView0 =  (ImageView)  rootView.findViewById(R.id.text_image02);
 
 
@@ -223,13 +225,6 @@ public class TabFragment1 extends Fragment {
                                 String votes = String.format("Votes %s / 10", movie.getVoteAverage().toString() );
                                 ratingsView.setText(votes);
                                 favoritesButton.setText(R.string.favorites);
-                                favoritesButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Toast.makeText(getActivity(), R.string.saved_to_favorites, Toast.LENGTH_SHORT).show();
-                                        insertItem();
-                                    }
-                                });
                                 aspectRatio = (double) mImage.getIntrinsicHeight() / mImage.getIntrinsicWidth();  // Use intrinsic dimensions to find the height of the image
                                 finalWidth = (width)/ IMAGE_RATIO;                                                // The second image is half the width of the header image
                                 leftMargin = finalWidth + IMAGE_PADDING;                                    // padding (left margin) for image
@@ -275,6 +270,12 @@ public class TabFragment1 extends Fragment {
         // bulkInsert our ContentValues array
         getActivity().getContentResolver().insert(FlavorsContract.FavoritesEntry.CONTENT_URI,
                 values);
+    }
+
+    @Override
+    public void onClick(View view) {
+        Toast.makeText(getActivity(), R.string.saved_to_favorites, Toast.LENGTH_SHORT).show();
+        insertItem();
     }
 
     public class Downloader extends AsyncTask<String, File, Downloader.Result> {
