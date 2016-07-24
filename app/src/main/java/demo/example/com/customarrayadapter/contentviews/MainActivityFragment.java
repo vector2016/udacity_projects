@@ -373,7 +373,7 @@ public class MainActivityFragment extends Fragment implements
                 return true;
 
             case R.id.highest_rated:
-                if (DEBUG) Log.i (LOG_TAG,"****highest_rated - moviesInfo :"+moviesInfo);
+                if (DEBUG) Log.i (LOG_TAG,"***highest_rated - moviesInfo :"+moviesInfo);
                 if (mTaskFragment != null)
                     if (!mTaskFragment.isRunning()) {
                         mTaskFragment.mSortType = HIGHEST_RATED_MOVIES;
