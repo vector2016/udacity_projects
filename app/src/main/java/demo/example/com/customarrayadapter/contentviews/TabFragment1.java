@@ -387,7 +387,7 @@ public class TabFragment1 extends Fragment {
 
             // print the group
             //System.out.format("'%s'\n", codeGroup);
-            Log.d("LOG","***** codeGroup: " + codeGroup);
+            Log.d("LOG","****** codeGroup: " + codeGroup);
         }
 
         int allTextStart = 0;
