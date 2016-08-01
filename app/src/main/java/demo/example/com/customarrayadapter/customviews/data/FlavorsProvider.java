@@ -7,7 +7,9 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
+import android.provider.Settings;
 import android.util.Log;
 
 // STARTS IN ANDROIDMANIFEST.XML
@@ -21,7 +23,24 @@ public class FlavorsProvider extends ContentProvider {
 	private static final int FLAVOR_WITH_ID = 200;
 	private static final int FAVORITES = 300;
 	private static final int FAVORITES_WITH_ID = 400;
-	////////
+
+	private static final String QUERY_STATEMENT = "INSERT OR IGNORE INTO favorites(movie_id," +
+			"version_name," +
+			"icon," +
+			"description," +
+			"film_poster," +
+			"poster_path," +
+			"adult," +
+			"overview," +
+			"release_date," +
+			"original_title," +
+			"original_language," +
+			"title," +
+			"backdrop_path," +
+			"popularity," +
+			"vote_count," +
+			"video," +
+			"vote_average) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 	private static UriMatcher buildUriMatcher(){
 		// Build a UriMatcher by adding a specific code to return based on a match
@@ -101,6 +120,20 @@ public class FlavorsProvider extends ContentProvider {
 				retCursor.setNotificationUri(getContext().getContentResolver(),uri);
 				Log.d(LOG_TAG,"query - FLAVOR");
 				return retCursor;
+				// TEST FAVORITES TABLE!!!!
+			/*} case FAVORITES:{
+				retCursor = mOpenHelper.getReadableDatabase().query(
+						FlavorsContract.FavoritesEntry.TABLE_FAVORITES,
+						projection,
+						selection,
+						selectionArgs,
+						null,
+						null,
+						sortOrder);
+				retCursor.setNotificationUri(getContext().getContentResolver(),uri);
+				Log.d(LOG_TAG,"query - FLAVOR");
+				return retCursor;
+			*/
 			}
 			// Individual flavor based on Id selected
 			case FLAVOR_WITH_ID:{ //
@@ -139,16 +172,79 @@ public class FlavorsProvider extends ContentProvider {
 				Log.d(LOG_TAG,"insert - FLAVOR");
 
 				break;
-			}
-			case FAVORITES: {
-				long _id = db.insert(FlavorsContract.FavoritesEntry.TABLE_FAVORITES, null, values);
+			} case FAVORITES: {
+				db.beginTransaction();
+				SQLiteStatement stmt = null;
+				try {
+					stmt = db.compileStatement(QUERY_STATEMENT);
+					stmt.bindLong(1,
+							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID));
+					String version = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME);
+					stmt.bindString(2,
+							version != null ? values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME) : "null");
+					String icon = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ICON);
+					stmt.bindString(3,icon != null ? icon : "null");
+					String description = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION);
+					stmt.bindString(4,description != null ? description : "null");
+					String filmPoster = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER);
+					stmt.bindString(5,filmPoster != null ? filmPoster : "null");
+					String posterPath = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_POSTER_PATH);
+					stmt.bindString(6,posterPath != null ? posterPath : "null");
+					stmt.bindLong(7,
+							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_ADULT));
+					String overview = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_OVERVIEW);
+					stmt.bindString(8,overview != null ? overview : "null");
+					String releasedDate = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_RELEASE_DATE);
+					stmt.bindString(9,releasedDate != null ? releasedDate : "null");
+					String originalTitle = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ORIGINAL_TITLE);
+					stmt.bindString(10,originalTitle != null ? originalTitle : "null");
+					String originalLanguage = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ORIGINAL_LANGUAGE);
+					stmt.bindString(11,originalLanguage != null ? originalLanguage : "null");
+					String title = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_TITLE);
+					stmt.bindString(12,title != null ? title : "null");
+					String backdropPath = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_BACKDROP_PATH);
+					stmt.bindString(13,backdropPath != null ? backdropPath : "null");
+					stmt.bindDouble(14,
+							values.getAsFloat( FlavorsContract.FlavorEntry.COLUMN_POPULARITY));
+					stmt.bindLong(16,
+							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_VOTE_COUNT));
+					stmt.bindLong(16,
+							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_VIDEO));
+					stmt.bindDouble(17,
+							values.getAsFloat( FlavorsContract.FlavorEntry.COLUMN_VOTE_AVERAGE));
+					stmt.execute();
+					db.setTransactionSuccessful();
+				} finally {
+					db.endTransaction();
+					if (stmt != null) stmt.close();
+				}
 				// insert unless it is already contained in the database
-				if (_id > 0) {
-					returnUri = FlavorsContract.FavoritesEntry.buildFavoritesUri(_id);
+				if (stmt != null) {
+					// TEST FAVORITES TABLE (DISPLAY TO LOG). IF WORKS USE CURSORLOADER LATER!!!!!!!!!
+					Cursor retCursor = mOpenHelper.getReadableDatabase().query(
+							FlavorsContract.FavoritesEntry.TABLE_FAVORITES,
+							null,
+							null,
+							null,
+							null,
+							null,
+							null);
+					if (retCursor != null ) {
+						if  (retCursor.moveToFirst()) {
+							do {
+								String poster = retCursor.getString( retCursor.getColumnIndex(FlavorsContract.FavoritesEntry.COLUMN_TITLE));
+								Log.d(LOG_TAG,"retCursor: " + poster);
+							}while (retCursor.moveToNext());
+						}
+					}
+					retCursor.close();
+
+					/////////////////////////////////////////////
+					returnUri = FlavorsContract.FavoritesEntry.buildFavoritesUri(0);
 				} else {
 					throw new android.database.SQLException("Failed to insert row into: " + uri);
 				}
-				Log.d(LOG_TAG,"insert - FAVORITES " + _id);
+				Log.d(LOG_TAG,"insert - FAVORITES " + stmt);
 
 				break;
 			}
@@ -158,7 +254,9 @@ public class FlavorsProvider extends ContentProvider {
 			}
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
+
 		return returnUri;
+
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 				FlavorsContract.FlavorEntry.TABLE_FLAVORS + "(" + FlavorsContract.FlavorEntry._ID +
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID +
-				" INTEGER, " +
+				" INTEGER UNIQUE ON CONFLICT REPLACE, " +
 				FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME +
 				" TEXT, " +
 				FlavorsContract.FlavorEntry.COLUMN_ICON +
@@ -62,7 +62,7 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 				FlavorsContract.FavoritesEntry.TABLE_FAVORITES + "(" + FlavorsContract.FavoritesEntry._ID +
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				FlavorsContract.FavoritesEntry.COLUMN_MOVIE_ID +
-				" INTEGER, " +
+				" INTEGER UNIQUE ON CONFLICT REPLACE, " +
 				FlavorsContract.FavoritesEntry.COLUMN_VERSION_NAME +
 				" TEXT, " +
 				FlavorsContract.FavoritesEntry.COLUMN_ICON +
