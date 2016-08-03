@@ -47,9 +47,6 @@ public class FlavorsProvider extends ContentProvider {
 		// Build a UriMatcher by adding a specific code to return based on a match
 		// It's common to use NO_MATCH as the code for this case.
 		final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-
-
 		final String authority = FlavorsContract.CONTENT_AUTHORITY;
 
 		// add a code for each type of URI you want
@@ -83,11 +80,11 @@ public class FlavorsProvider extends ContentProvider {
 		Log.d(LOG_TAG,"***uri: "+uri);
 		switch (match){
 			case FLAVOR:{
-				Log.d(LOG_TAG,"getType - FLAVOR");
+				Log.d(LOG_TAG,"getType - FLAVOR" + uri);
 				return FlavorsContract.FlavorEntry.CONTENT_DIR_TYPE;
 			}
 			case FLAVOR_WITH_ID:{
-				Log.d(LOG_TAG,"getType - FLAVOR_WITH_ID");
+				Log.d(LOG_TAG,"getType - FLAVOR_WITH_ID" + uri);
 				return FlavorsContract.FlavorEntry.CONTENT_ITEM_TYPE;
 			}
 			default:{
@@ -119,7 +116,7 @@ public class FlavorsProvider extends ContentProvider {
 						null,
 						sortOrder);
 				retCursor.setNotificationUri(getContext().getContentResolver(),uri);
-				Log.d(LOG_TAG,"query - FLAVOR");
+				Log.d(LOG_TAG,"query - FLAVOR" + uri);
 				return retCursor;
 				// TEST FAVORITES TABLE!!!!
 			/*} case FAVORITES:{
@@ -170,7 +167,7 @@ public class FlavorsProvider extends ContentProvider {
 				} else {
 					throw new android.database.SQLException("Failed to insert row into: " + uri);
 				}
-				Log.d(LOG_TAG,"insert - FLAVOR");
+				Log.d(LOG_TAG,"insert - FLAVOR" + uri);
 
 				break;
 			} case FAVORITES: {

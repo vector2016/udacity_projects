@@ -56,6 +56,7 @@ public abstract class CursorRecyclerAdapter<VH
 implements Filterable, CursorFilter.CursorFilterClient {
 	private static String LOG_TAG = CursorRecyclerAdapter.class.getSimpleName();
 
+	private static int count = 40;
 	private boolean mDataValid;
 	private int mRowIDColumn;
 	private Cursor mCursor;
