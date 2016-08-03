@@ -54,13 +54,13 @@ public class FlavorsProvider extends ContentProvider {
 		// CONTENT_AUTHORITY = "demo.example.com.customarrayadapter.app";
 		// TABLE_FLAVORS = "flavor";
 		// FLAVOR = 100;
-		// EG, demo.example.com.customarrayadapter.app/flavor/100
+		// EG, demo.example.com.customarrayadapter.app/flavor
 		matcher.addURI(authority, FlavorsContract.FlavorEntry.TABLE_FLAVORS, FLAVOR);
 
 		// CONTENT_AUTHORITY = "demo.example.com.customarrayadapter.app";
 		// TABLE_FLAVORS = "flavor/#";
 		// FLAVOR_WITH_ID = 200;
-		// EG, demo.example.com.customarrayadapter.app/flavor/#/200
+		// EG, demo.example.com.customarrayadapter.app/flavor/#
 		matcher.addURI(authority, FlavorsContract.FlavorEntry.TABLE_FLAVORS + "/#", FLAVOR_WITH_ID);
 
 		matcher.addURI(authority, FlavorsContract.FavoritesEntry.TABLE_FAVORITES, FAVORITES);
