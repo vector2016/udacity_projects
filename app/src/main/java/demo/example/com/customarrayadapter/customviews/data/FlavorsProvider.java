@@ -26,10 +26,6 @@ public class FlavorsProvider extends ContentProvider {
 	private static final int FAVORITES_WITH_ID = 400;
 
 	private static final String QUERY_STATEMENT = "INSERT OR IGNORE INTO favorites(movie_id," +
-			"version_name," +
-			"icon," +
-			"description," +
-			"film_poster," +
 			"poster_path," +
 			"adult," +
 			"overview," +
@@ -41,7 +37,7 @@ public class FlavorsProvider extends ContentProvider {
 			"popularity," +
 			"vote_count," +
 			"video," +
-			"vote_average) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+			"vote_average) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
 	private static UriMatcher buildUriMatcher(){
 		// Build a UriMatcher by adding a specific code to return based on a match
@@ -177,38 +173,38 @@ public class FlavorsProvider extends ContentProvider {
 					stmt = db.compileStatement(QUERY_STATEMENT);
 					stmt.bindLong(1,
 							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID));
-					String version = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME);
-					stmt.bindString(2,
-							version != null ? values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME) : "null");
-					String icon = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ICON);
-					stmt.bindString(3,icon != null ? icon : "null");
-					String description = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION);
-					stmt.bindString(4,description != null ? description : "null");
-					String filmPoster = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER);
-					stmt.bindString(5,filmPoster != null ? filmPoster : "null");
+					//String version = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME);
+					//stmt.bindString(2,
+					//		version != null ? values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME) : "null");
+					//String icon = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ICON);
+					//stmt.bindString(3,icon != null ? icon : "null");
+					//String description = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION);
+					//stmt.bindString(4,description != null ? description : "null");
+					//String filmPoster = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER);
+					//stmt.bindString(5,filmPoster != null ? filmPoster : "null");
 					String posterPath = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_POSTER_PATH);
-					stmt.bindString(6,posterPath != null ? posterPath : "null");
-					stmt.bindLong(7,
+					stmt.bindString(2,posterPath != null ? posterPath : "null");
+					stmt.bindLong(3,
 							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_ADULT));
 					String overview = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_OVERVIEW);
-					stmt.bindString(8,overview != null ? overview : "null");
+					stmt.bindString(4,overview != null ? overview : "null");
 					String releasedDate = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_RELEASE_DATE);
-					stmt.bindString(9,releasedDate != null ? releasedDate : "null");
+					stmt.bindString(5,releasedDate != null ? releasedDate : "null");
 					String originalTitle = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ORIGINAL_TITLE);
-					stmt.bindString(10,originalTitle != null ? originalTitle : "null");
+					stmt.bindString(6,originalTitle != null ? originalTitle : "null");
 					String originalLanguage = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ORIGINAL_LANGUAGE);
-					stmt.bindString(11,originalLanguage != null ? originalLanguage : "null");
+					stmt.bindString(7,originalLanguage != null ? originalLanguage : "null");
 					String title = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_TITLE);
-					stmt.bindString(12,title != null ? title : "null");
+					stmt.bindString(8,title != null ? title : "null");
 					String backdropPath = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_BACKDROP_PATH);
-					stmt.bindString(13,backdropPath != null ? backdropPath : "null");
-					stmt.bindDouble(14,
+					stmt.bindString(9,backdropPath != null ? backdropPath : "null");
+					stmt.bindDouble(10,
 							values.getAsFloat( FlavorsContract.FlavorEntry.COLUMN_POPULARITY));
-					stmt.bindLong(16,
+					stmt.bindLong(11,
 							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_VOTE_COUNT));
-					stmt.bindLong(16,
+					stmt.bindLong(12,
 							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_VIDEO));
-					stmt.bindDouble(17,
+					stmt.bindDouble(13,
 							values.getAsFloat( FlavorsContract.FlavorEntry.COLUMN_VOTE_AVERAGE));
 					stmt.execute();
 					db.setTransactionSuccessful();
@@ -312,7 +308,7 @@ public class FlavorsProvider extends ContentProvider {
 						}catch(SQLiteConstraintException e) {
 							Log.w(LOG_TAG, "Attempting to insert " +
 									value.getAsString(
-											FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME)
+											FlavorsContract.FlavorEntry.TABLE_FLAVORS)
 									+ " but value is already in database.");
 						}
 						if (_id != -1){

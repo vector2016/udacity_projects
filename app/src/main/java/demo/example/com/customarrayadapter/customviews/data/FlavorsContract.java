@@ -18,10 +18,10 @@ public class FlavorsContract{
 		// columns
 		public static final String _ID = "_id";
 		public static final String COLUMN_MOVIE_ID = "movie_id"; // long
-		public static final String COLUMN_ICON = "icon";
-		public static final String COLUMN_DESCRIPTION = "description";
-		public static final String COLUMN_VERSION_NAME = "version_name";
-		public static final String COLUMN_FILM_POSTER = "film_poster";
+		//public static final String COLUMN_ICON = "icon";
+		//public static final String COLUMN_DESCRIPTION = "description";
+		//public static final String COLUMN_VERSION_NAME = "version_name";
+		//public static final String COLUMN_FILM_POSTER = "film_poster";
 
 		//public static final String RESULTS = "results"; // array of objects
 		public static final String COLUMN_POSTER_PATH = "poster_path";       // string
@@ -61,10 +61,10 @@ public class FlavorsContract{
 		// columns
 		public static final String _ID = "_id";
 		public static final String COLUMN_MOVIE_ID = "movie_id"; // long
-		public static final String COLUMN_ICON = "icon";
-		public static final String COLUMN_DESCRIPTION = "description";
-		public static final String COLUMN_VERSION_NAME = "version_name";
-		public static final String COLUMN_FILM_POSTER = "film_poster";
+		//public static final String COLUMN_ICON = "icon";
+		//public static final String COLUMN_DESCRIPTION = "description";
+		//public static final String COLUMN_VERSION_NAME = "version_name";
+		//public static final String COLUMN_FILM_POSTER = "film_poster";
 
 		//public static final String RESULTS = "results"; // array of objects
 		public static final String COLUMN_POSTER_PATH = "poster_path";       // string

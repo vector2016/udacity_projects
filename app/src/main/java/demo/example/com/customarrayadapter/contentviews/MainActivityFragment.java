@@ -172,15 +172,13 @@ public class MainActivityFragment extends Fragment implements
         // in the array of ContentValues
         for (int i = 0; i < androidFlavors.length; i++) {
             flavorValuesArr[i] = new ContentValues();
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_ICON, androidFlavors[i].getImage());
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME,
-                    androidFlavors[i].getVersionName());
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION,
-                    androidFlavors[i].getVersionNumber());
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER,
-                    androidFlavors[i].getFilmposter());
-
-
+            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_ICON, androidFlavors[i].getImage());
+            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME,
+            //        androidFlavors[i].getVersionName());
+            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION,
+            //        androidFlavors[i].getVersionNumber());
+            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER,
+            //        androidFlavors[i].getFilmposter());
         }
         getActivity().getContentResolver().bulkInsert(FlavorsContract.FlavorEntry.CONTENT_URI,
                 flavorValuesArr);

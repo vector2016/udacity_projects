@@ -195,7 +195,8 @@ public class TaskFragment extends Fragment {
     private final String API_KEY = "60dc21f18cb4ecb2cf95340022bc1bc1";
     private static final String LOCATION = "US";
     private ArrayList<Movie> mMovie;
-    private String mSortType = MOST_POPULAR_MOVIES;
+    //private String mSortType = MOST_POPULAR_MOVIES;
+    private String mSortType = HIGHEST_RATED_MOVIES;
 
     //private ArrayList<Integer> mGenre;
     //private MovieListener movieListener;

@@ -11,7 +11,7 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 
 	//name & version
 	private static final String DATABASE_NAME = "flavors.db";
-	private static final int DATABASE_VERSION = 46;
+	private static final int DATABASE_VERSION = 48;
 
 	public FlavorsDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -25,14 +25,6 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID +
 				" INTEGER UNIQUE ON CONFLICT REPLACE, " +
-				FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME +
-				" TEXT, " +
-				FlavorsContract.FlavorEntry.COLUMN_ICON +
-				" INTEGER, " +
-				FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION +
-				" TEXT, " +
-				FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER +
-				" TEXT, " +
 				FlavorsContract.FlavorEntry.COLUMN_POSTER_PATH +
 				" TEXT, " +
 				FlavorsContract.FlavorEntry.COLUMN_ADULT +
@@ -63,14 +55,6 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				FlavorsContract.FavoritesEntry.COLUMN_MOVIE_ID +
 				" INTEGER UNIQUE ON CONFLICT REPLACE, " +
-				FlavorsContract.FavoritesEntry.COLUMN_VERSION_NAME +
-				" TEXT, " +
-				FlavorsContract.FavoritesEntry.COLUMN_ICON +
-				" INTEGER, " +
-				FlavorsContract.FavoritesEntry.COLUMN_DESCRIPTION +
-				" TEXT, " +
-				FlavorsContract.FavoritesEntry.COLUMN_FILM_POSTER +
-				" TEXT, " +
 				FlavorsContract.FavoritesEntry.COLUMN_POSTER_PATH +
 				" TEXT, " +
 				FlavorsContract.FavoritesEntry.COLUMN_ADULT +

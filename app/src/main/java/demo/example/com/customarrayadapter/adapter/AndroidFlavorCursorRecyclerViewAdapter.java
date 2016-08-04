@@ -138,7 +138,7 @@ public class AndroidFlavorCursorRecyclerViewAdapter extends
             holder.info.setPosterPath(poster);
             holder.info.setOriginalLanguage(movieName);
             String description = cursor.getString(
-                    cursor.getColumnIndex(FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION));
+                    cursor.getColumnIndex(FlavorsContract.FlavorEntry.COLUMN_OVERVIEW));
 
 
             Glide.with(context.getApplicationContext()).load(poster)
