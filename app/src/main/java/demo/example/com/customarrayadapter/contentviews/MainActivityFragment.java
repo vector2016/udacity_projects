@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -31,11 +30,11 @@ import java.util.ArrayList;
 import demo.example.com.customarrayadapter.MovieActivity;
 import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.adapter.AndroidFlavorCursorRecyclerViewAdapter;
-import demo.example.com.customarrayadapter.customviews.data.FlavorsContract;
+import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
+import demo.example.com.customarrayadapter.contentviews.remotesource.TaskFragment;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback.OnImageLoadedListener;
 import demo.example.com.customarrayadapter.model.AndroidFlavor;
 import demo.example.com.customarrayadapter.model.Movie;
-import demo.example.com.customarrayadapter.model.PassReference;
 
 
 /**
@@ -44,7 +43,7 @@ import demo.example.com.customarrayadapter.model.PassReference;
 
 public class MainActivityFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
-        TaskFragment. TaskCallbacks{
+         TaskFragment. TaskCallbacks{
 
 
     private static String LOG_TAG = MainActivityFragment.class.getSimpleName();

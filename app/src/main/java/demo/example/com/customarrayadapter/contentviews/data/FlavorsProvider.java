@@ -1,4 +1,4 @@
-package demo.example.com.customarrayadapter.customviews.data;
+package demo.example.com.customarrayadapter.contentviews.data;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -9,7 +9,6 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.net.Uri;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -25,7 +24,7 @@ public class FlavorsProvider extends ContentProvider {
 	private static final int FAVORITES = 300;
 	private static final int FAVORITES_WITH_ID = 400;
 
-	private static final String QUERY_STATEMENT = "INSERT OR IGNORE INTO favorites(movie_id," +
+	private static final String INSERT_STATEMENT = "INSERT OR IGNORE INTO favorites(movie_id," +
 			"poster_path," +
 			"adult," +
 			"overview," +
@@ -170,7 +169,7 @@ public class FlavorsProvider extends ContentProvider {
 				db.beginTransaction();
 				SQLiteStatement stmt = null;
 				try {
-					stmt = db.compileStatement(QUERY_STATEMENT);
+					stmt = db.compileStatement(INSERT_STATEMENT);
 					stmt.bindLong(1,
 							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID));
 					//String version = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME);
@@ -250,7 +249,6 @@ public class FlavorsProvider extends ContentProvider {
 		getContext().getContentResolver().notifyChange(uri, null);
 
 		return returnUri;
-
 	}
 
 	@Override

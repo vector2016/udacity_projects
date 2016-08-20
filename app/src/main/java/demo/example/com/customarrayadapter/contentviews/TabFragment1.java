@@ -11,7 +11,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.SpannableString;
@@ -23,7 +22,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,14 +29,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.target.ViewTarget;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -52,11 +48,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import demo.example.com.customarrayadapter.R;
-import demo.example.com.customarrayadapter.customviews.CustomImageView;
 import demo.example.com.customarrayadapter.customviews.FutureStudioView;
 import demo.example.com.customarrayadapter.customviews.MyLeadingMarginSpan2;
-import demo.example.com.customarrayadapter.customviews.data.FlavorsContract;
-import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback;
+import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
 import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback;
 import demo.example.com.customarrayadapter.model.Movie;
 
@@ -154,16 +148,14 @@ public class TabFragment1 extends Fragment
         image =  IMAGE_URL + movie.getPosterPath();
         imageHeader = IMAGE_URL + movie.getBackdropPath();
 
-        mFileDownloaderTask = new Downloader(Glide.with(getContext()));
-        mFileDownloaderTask.execute(imageHeader,image);
-
-        Result result = new Result();
-
-        result.key.put("0",image);
-        result.key.put("1", imageHeader);
-
-        displayImages(result);
-        result.key.clear();
+        //mFileDownloaderTask = new Downloader(Glide.with(getContext()));
+        //mFileDownloaderTask.execute(imageHeader,image);
+        //Result result = new Result();
+        //result.key.put("0",image);
+        //result.key.put("1", imageHeader);
+        //displayImages(result);
+        //result.key.clear();
+        layoutViews();
     }
 
     ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {
@@ -203,7 +195,7 @@ public class TabFragment1 extends Fragment
         }
     };
 
-    private void displayImages(final Result result) {
+    private void layoutViews() {
         Glide.with(getContext())
                 .load(image)
                 .asBitmap()
@@ -269,7 +261,7 @@ public class TabFragment1 extends Fragment
         values.put(FlavorsContract.FavoritesEntry.COLUMN_VOTE_AVERAGE,
                 movie.getVoteAverage());
 
-        // bulkInsert our ContentValues array
+        // Insert our ContentValues array
         getActivity().getContentResolver().insert(FlavorsContract.FavoritesEntry.CONTENT_URI,
                 values);
     }
@@ -350,6 +342,7 @@ public class TabFragment1 extends Fragment
         Map<String,String> key = new HashMap<>();
     }
 
+
     public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener){
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             v.getViewTreeObserver().removeGlobalOnLayoutListener(listener);
@@ -365,11 +358,17 @@ public class TabFragment1 extends Fragment
          * Get the text
          */
         String plainText=getResources().getString(R.string.text_sample);
-         String mText = "Older post, but since there is no accepted answer and I have just found solution for same problem in my app, I will post a solution.\n" +
+         String mText = "Older post, but since there is no accepted answer and I have just found solution for same " +
+                 "problem in my app, I will post a solution.\n" +
                 "\n" +
-                "I have discovered that text without any line break works well. Text with a line break that splits the text into 2 parts in a way that the part before line break ends to the right of the image, and the part after line break starts already on next line bellow the image, this also works well.\n" +
+                "I have discovered that text without any line break works well. Text with a line break that" +
+                 " splits the text into 2 parts in a way that the part before line break ends to the right of the " +
+                 "image, and the part after line break starts already on next line bellow the image, this also works well.\n" +
                 "\n" +
-                "So what I do is I set left margin of the wrapping TextView's LayoutParams to the desired indent, and I set the text into TextView. Then I add OnGlobalLayoutListener, and inside onGlobalLayout callback, I count the position of the last character on the last line to the right of the image.";
+                "So what I do is I set left margin of the wrapping TextView's LayoutParams to the" +
+                 " desired indent, and I set the text into TextView. Then I add OnGlobalLayoutListener, " +
+                 "and inside onGlobalLayout callback, I count the position of the last character on the last " +
+                 "line to the right of the image.";
 
 
         //String plainTextToSearch=getResources().getString(R.string.text_sample);
@@ -444,7 +443,7 @@ public class TabFragment1 extends Fragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mFileDownloaderTask.cancel(true);
+        //mFileDownloaderTask.cancel(true);
         Log.d("LOG_TAG","onDestroy()");
     }
 }

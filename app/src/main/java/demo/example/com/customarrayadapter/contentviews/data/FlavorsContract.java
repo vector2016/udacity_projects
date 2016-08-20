@@ -1,4 +1,4 @@
-package demo.example.com.customarrayadapter.customviews.data;
+package demo.example.com.customarrayadapter.contentviews.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -101,8 +101,8 @@ public class FlavorsContract{
 
 
 
-	public static final class TasteEntry implements BaseColumns {
-		public static final String TABLE_TASTE = "taste";
+	public static final class GenreEntry implements BaseColumns {
+		public static final String TABLE_GENRE = "genre";
 
 		public static final String _ID = "_id";
 		public static final String COLUMN_GENRE_ID = "genre_id";
@@ -110,16 +110,16 @@ public class FlavorsContract{
 
 		// create content uri
 		public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
-				.appendPath(TABLE_TASTE).build();
+				.appendPath(TABLE_GENRE).build();
 		// create cursor of base type directory for multiple entries
 		public static final String CONTENT_DIR_TYPE =
-				ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_TASTE;
+				ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + TABLE_GENRE;
 		// create cursor of base type item for single entry
 		public static final String CONTENT_ITEM_TYPE =
-				ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + TABLE_TASTE;
+				ContentResolver.CURSOR_ITEM_BASE_TYPE +"/" + CONTENT_AUTHORITY + "/" + TABLE_GENRE;
 
 		// for building URIs on insertion
-		public static Uri buildTasteUri(long id){
+		public static Uri buildGenreUri(long id){
 			return ContentUris.withAppendedId(CONTENT_URI, id);
 		}
 	}

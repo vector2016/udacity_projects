@@ -1,4 +1,4 @@
-package demo.example.com.customarrayadapter.customviews.data;
+package demo.example.com.customarrayadapter.contentviews.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,7 +11,7 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 
 	//name & version
 	private static final String DATABASE_NAME = "flavors.db";
-	private static final int DATABASE_VERSION = 48;
+	private static final int DATABASE_VERSION = 51;
 
 	public FlavorsDBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -81,19 +81,17 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 				" FLOAT" + ");";
 
 
-		sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
-		sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
-
-
 		final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " +
-				FlavorsContract.TasteEntry.TABLE_TASTE + "(" + FlavorsContract.TasteEntry._ID +
+				FlavorsContract.GenreEntry.TABLE_GENRE + "(" + FlavorsContract.GenreEntry._ID +
 				" INTEGER PRIMARY KEY AUTOINCREMENT, " +
-				FlavorsContract.TasteEntry.COLUMN_GENRE_ID + " TEXT NOT NULL, " +
-				FlavorsContract.TasteEntry.COLUMN_GENRE_NAME +
+				FlavorsContract.GenreEntry.COLUMN_GENRE_ID + " TEXT NOT NULL, " +
+				FlavorsContract.GenreEntry.COLUMN_GENRE_NAME +
 				" TEXT NOT NULL" +
 				");";
 
-		//sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
+		sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
+		sqLiteDatabase.execSQL(SQL_CREATE_FAVORITES_TABLE);
+		sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
 	}
 	// Upgrade database when version is changed.
 	@Override
@@ -108,6 +106,10 @@ public class FlavorsDBHelper extends SQLiteOpenHelper {
 		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FlavorsContract.FavoritesEntry.TABLE_FAVORITES);
 		sqLiteDatabase.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
 				FlavorsContract.FavoritesEntry.TABLE_FAVORITES + "'");
+
+		sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FlavorsContract.GenreEntry.TABLE_GENRE);
+		sqLiteDatabase.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE NAME = '" +
+				FlavorsContract.GenreEntry.TABLE_GENRE + "'");
 
 		// re-create database
 		onCreate(sqLiteDatabase);

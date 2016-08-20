@@ -30,7 +30,7 @@
         </activity>
         <provider
             android:authorities="@string/content_authority"
-            android:name=".customviews.data.FlavorsProvider"
+            android:name=".contentviews.data.FlavorsProvider"
             android:exported="false"
             android:syncable="true"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->

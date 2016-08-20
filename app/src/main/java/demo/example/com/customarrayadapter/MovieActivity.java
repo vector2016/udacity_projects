@@ -13,9 +13,8 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import demo.example.com.customarrayadapter.adapter.PagerAdapter;
-import demo.example.com.customarrayadapter.adapter.SmartFragmentStatePagerAdapter;
 import demo.example.com.customarrayadapter.contentviews.MainActivityFragment;
-import demo.example.com.customarrayadapter.contentviews.TaskFragment;
+import demo.example.com.customarrayadapter.contentviews.remotesource.TaskFragment;
 
 public class MovieActivity extends AppCompatActivity  {
         final static String EXTRA_NAME = "extra_name";

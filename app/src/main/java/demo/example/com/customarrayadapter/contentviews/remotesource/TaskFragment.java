@@ -1,4 +1,4 @@
-package demo.example.com.customarrayadapter.contentviews;
+package demo.example.com.customarrayadapter.contentviews.remotesource;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -39,7 +39,9 @@ public class TaskFragment extends Fragment {
    * Callback interface through which the fragment will report the
    * task's progress and results back to the Activity.
    */
-  interface TaskCallbacks {
+  
+  //Note: TaskCallback has been made public
+  public interface TaskCallbacks {
     void onPreExecute();
     void onProgressUpdate(int percent);
     void onCancelled();
