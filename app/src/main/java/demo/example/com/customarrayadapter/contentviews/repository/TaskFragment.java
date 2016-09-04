@@ -1,4 +1,4 @@
-package demo.example.com.customarrayadapter.contentviews.remotesource;
+package demo.example.com.customarrayadapter.contentviews.repository;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -399,8 +399,10 @@ public class TaskFragment extends Fragment {
 
         for (int j=0;j<genreIds.length();j++){
           int genre = genreIds.getInt(j);
+          Log.d(LOG_TAG,"genreId: "+genre);
           mGenre.add(genre);
         }
+        Log.d(LOG_TAG,   "//////////////////////////////////");
         movie.setGenreIds(mGenre);
         mGenre.clear();
 

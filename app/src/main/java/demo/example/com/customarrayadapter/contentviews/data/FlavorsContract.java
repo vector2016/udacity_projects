@@ -98,9 +98,6 @@ public class FlavorsContract{
 		}
 	}
 
-
-
-
 	public static final class GenreEntry implements BaseColumns {
 		public static final String TABLE_GENRE = "genre";
 

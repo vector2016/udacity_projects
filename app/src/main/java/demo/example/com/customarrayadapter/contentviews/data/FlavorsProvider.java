@@ -172,15 +172,6 @@ public class FlavorsProvider extends ContentProvider {
 					stmt = db.compileStatement(INSERT_STATEMENT);
 					stmt.bindLong(1,
 							values.getAsInteger( FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID));
-					//String version = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME);
-					//stmt.bindString(2,
-					//		version != null ? values.getAsString( FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME) : "null");
-					//String icon = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_ICON);
-					//stmt.bindString(3,icon != null ? icon : "null");
-					//String description = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION);
-					//stmt.bindString(4,description != null ? description : "null");
-					//String filmPoster = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER);
-					//stmt.bindString(5,filmPoster != null ? filmPoster : "null");
 					String posterPath = values.getAsString( FlavorsContract.FlavorEntry.COLUMN_POSTER_PATH);
 					stmt.bindString(2,posterPath != null ? posterPath : "null");
 					stmt.bindLong(3,

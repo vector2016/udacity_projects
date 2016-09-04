@@ -10,7 +10,7 @@ import demo.example.com.customarrayadapter.contentviews.TabFragment3;
 import demo.example.com.customarrayadapter.contentviews.TabFragment4;
 import demo.example.com.customarrayadapter.contentviews.TabFragment5;
 import demo.example.com.customarrayadapter.model.Movie;
-import demo.example.com.customarrayadapter.contentviews.TabFragment1.Downloader;
+//import demo.example.com.customarrayadapter.contentviews.TabFragment1.Downloader;
 
 public class PagerAdapter extends SmartFragmentStatePagerAdapter {
     private static final String IMAGE_URL = "http://image.tmdb.org/t/p/w342/";

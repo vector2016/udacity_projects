@@ -31,7 +31,7 @@ import demo.example.com.customarrayadapter.MovieActivity;
 import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.adapter.AndroidFlavorCursorRecyclerViewAdapter;
 import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
-import demo.example.com.customarrayadapter.contentviews.remotesource.TaskFragment;
+import demo.example.com.customarrayadapter.contentviews.repository.TaskFragment;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback.OnImageLoadedListener;
 import demo.example.com.customarrayadapter.model.AndroidFlavor;
 import demo.example.com.customarrayadapter.model.Movie;
@@ -69,9 +69,6 @@ public class MainActivityFragment extends Fragment implements
     private int mIndex;
     private OnImageLoadedListener mImageLoadedCallback;
     private onPassReferenceListener mOnPassReferenceCallback;
-
-
-
     private AndroidFlavor[] androidFlavors;
     SharedPreferences mPrefs;
     static onPassReferenceListener myListener;
@@ -84,11 +81,8 @@ public class MainActivityFragment extends Fragment implements
         void onPassReference(MainActivityFragment fragment);
     }
 
-
     public MainActivityFragment() {
     }
-
-
 
     /**
      * Hold a reference to the parent Activity so we can report the
@@ -145,6 +139,7 @@ public class MainActivityFragment extends Fragment implements
 
         // initialize loader
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+
         super.onActivityCreated(savedInstanceState);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
@@ -162,25 +157,6 @@ public class MainActivityFragment extends Fragment implements
         } else {
             if (DEBUG) Log.i (LOG_TAG, "start");
         }
-    }
-
-    // insert data into database
-    public void insertData() {
-        ContentValues[] flavorValuesArr = new ContentValues[androidFlavors.length];
-        // Loop through static array of Flavors, add each to an instance of ContentValues
-        // in the array of ContentValues
-        for (int i = 0; i < androidFlavors.length; i++) {
-            flavorValuesArr[i] = new ContentValues();
-            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_ICON, androidFlavors[i].getImage());
-            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME,
-            //        androidFlavors[i].getVersionName());
-            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION,
-            //        androidFlavors[i].getVersionNumber());
-            //flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER,
-            //        androidFlavors[i].getFilmposter());
-        }
-        getActivity().getContentResolver().bulkInsert(FlavorsContract.FlavorEntry.CONTENT_URI,
-                flavorValuesArr);
     }
 
     // insert data into database

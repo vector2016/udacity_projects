@@ -74,7 +74,7 @@ public class TabFragment1 extends Fragment
     String image,imageHeader;
    static Movie movie;
 
-    private Downloader mFileDownloaderTask;
+    //private Downloader mFileDownloaderTask;
     private FutureStudioView customView;
 
     public void setArguments(Bundle args) {
@@ -142,19 +142,9 @@ public class TabFragment1 extends Fragment
         ratingsView = (TextView) rootView.findViewById(R.id.ratings_view);
         favoritesButton = (Button) rootView.findViewById(R.id.favorites_button);
         favoritesButton.setOnClickListener(this);
-        //imageView0 =  (ImageView)  rootView.findViewById(R.id.text_image02);
-
 
         image =  IMAGE_URL + movie.getPosterPath();
         imageHeader = IMAGE_URL + movie.getBackdropPath();
-
-        //mFileDownloaderTask = new Downloader(Glide.with(getContext()));
-        //mFileDownloaderTask.execute(imageHeader,image);
-        //Result result = new Result();
-        //result.key.put("0",image);
-        //result.key.put("1", imageHeader);
-        //displayImages(result);
-        //result.key.clear();
         layoutViews();
     }
 
@@ -165,7 +155,6 @@ public class TabFragment1 extends Fragment
             // then find subviews and do the animations
             // here, we just use the entire view for the fade animation
             view.setAlpha( 0f );
-
             ObjectAnimator fadeAnim = ObjectAnimator.ofFloat( view, "alpha", 0f, 1f );
             fadeAnim.setDuration( 2500 );
             fadeAnim.start();
@@ -272,84 +261,7 @@ public class TabFragment1 extends Fragment
         insertItem();
     }
 
-    public class Downloader extends AsyncTask<String, File, Downloader.Result> {
-        private static final String TAG = "Downloader";
-        private final RequestManager glide;
-        public Downloader(RequestManager glide) {
-            this.glide = glide;
-        }
 
-        @Override protected Result doInBackground(String... params) {
-
-            FutureTarget<File>[] requests;
-            requests = new FutureTarget[params.length];
-            // fire everything into Glide queue
-            for (int i = 0; i < params.length; i++) {
-                if (isCancelled()) {
-                    break;
-                }
-                requests[i] = glide
-                        .load(params[i])
-                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-                ;
-            }
-            // wait for each item
-            Result result = new Result();
-            for (int i = 0; i < params.length; i++) {
-                if (isCancelled()) {
-                    for (int j = i; j < params.length; j++) {
-                        if (requests[i] != null) Glide.clear(requests[i]);
-                        result.failures.put(params[j], new CancellationException());
-                    }
-                    break;
-                }
-                try {
-                    File file = requests[i].get(10, TimeUnit.SECONDS);
-
-                    result.key.add(i, params[i]);
-                    result.success.put(params[i], file);
-                    Log.d(TAG,"params[i] ?" + params[i]);
-                    publishProgress(file);
-                } catch (Exception e) {
-                    result.failures.put(params[i], e);
-                } finally {
-                    Glide.clear(requests[i]);
-                }
-            }
-            return result;
-        }
-
-        @Override protected void onProgressUpdate(File... values) {
-            for (File file : values) {
-                Log.v(TAG, "Finished " + file);
-            }
-        }
-
-        @Override protected void onPostExecute(Downloader.Result result) {
-            Log.i(TAG, String.format(Locale.ROOT, "Downloaded %d files, %d failed.",
-                    result.success.size(), result.failures.size()));
-            result.key.clear();
-        }
-
-         class Result {
-            Map<String, File> success = new HashMap<>();
-            Map<String, Exception> failures = new HashMap<>();
-            List<String> key = new ArrayList<>();
-        }
-    }
-
-    class Result {
-        Map<String,String> key = new HashMap<>();
-    }
-
-
-    public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener){
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            v.getViewTreeObserver().removeGlobalOnLayoutListener(listener);
-        } else {
-            v.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
-        }
-    }
 
     public void makeSpan(){
 
@@ -414,7 +326,7 @@ public class TabFragment1 extends Fragment
             Add heights of textViews to fontspacing to make text flush with image. Eg
             add date, duration, ratings and favorite
          */
-        lines = (int) ( (finalHeight/(fontSpacing))  + 1) - 7;
+        lines = (int) ( (finalHeight/(fontSpacing))  + 1) - 8;
         /**
          * Build the layout with LeadingMarginSpan2
          */
