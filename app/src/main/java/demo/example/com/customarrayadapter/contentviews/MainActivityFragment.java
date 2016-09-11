@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -31,11 +30,11 @@ import java.util.ArrayList;
 import demo.example.com.customarrayadapter.MovieActivity;
 import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.adapter.AndroidFlavorCursorRecyclerViewAdapter;
-import demo.example.com.customarrayadapter.customviews.data.FlavorsContract;
+import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
+import demo.example.com.customarrayadapter.contentviews.repository.TaskFragment;
 import demo.example.com.customarrayadapter.interfaces.ImageLoadedCallback.OnImageLoadedListener;
 import demo.example.com.customarrayadapter.model.AndroidFlavor;
 import demo.example.com.customarrayadapter.model.Movie;
-import demo.example.com.customarrayadapter.model.PassReference;
 
 
 /**
@@ -44,7 +43,7 @@ import demo.example.com.customarrayadapter.model.PassReference;
 
 public class MainActivityFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>,
-        TaskFragment. TaskCallbacks{
+         TaskFragment. TaskCallbacks{
 
 
     private static String LOG_TAG = MainActivityFragment.class.getSimpleName();
@@ -70,9 +69,6 @@ public class MainActivityFragment extends Fragment implements
     private int mIndex;
     private OnImageLoadedListener mImageLoadedCallback;
     private onPassReferenceListener mOnPassReferenceCallback;
-
-
-
     private AndroidFlavor[] androidFlavors;
     SharedPreferences mPrefs;
     static onPassReferenceListener myListener;
@@ -85,11 +81,8 @@ public class MainActivityFragment extends Fragment implements
         void onPassReference(MainActivityFragment fragment);
     }
 
-
     public MainActivityFragment() {
     }
-
-
 
     /**
      * Hold a reference to the parent Activity so we can report the
@@ -98,18 +91,10 @@ public class MainActivityFragment extends Fragment implements
      * each configuration change.
      */
 
-    public void setOnPassReferenceListener (onPassReferenceListener listener) {
-        listener.onPassReference(MainActivityFragment.this);
-    }
-
     @Override
     public void onAttach(Activity activity) {
         if (DEBUG) Log.i(LOG_TAG, "onAttach(Activity)");
         super.onAttach(activity);
-        //if (!(getTargetFragment() instanceof ImageLoadedCallback.OnImageLoadedCallbacks)) {
-        //    throw new IllegalStateException("Target fragment must implement the OnImageLoadedCallbacks interface.");
-        //}
-
 
         /**
          * Hold a reference to the target fragment so we can report back the task's
@@ -118,8 +103,6 @@ public class MainActivityFragment extends Fragment implements
 
         mOnPassReferenceCallback = (onPassReferenceListener) getTargetFragment();
         if (DEBUG) Log.d(LOG_TAG,"mOnPassReferenceCallback initialised!!" + mOnPassReferenceCallback);
-        //mImageLoadedCallback = (OnImageLoadedListener) getTargetFragment();
-        //if (DEBUG) Log.d(LOG_TAG,"mCallImageLoadedCallbacks initialised!!: "+mImageLoadedCallback);
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -152,61 +135,28 @@ public class MainActivityFragment extends Fragment implements
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
         if (DEBUG) Log.i(LOG_TAG, "onActivityCreated(Bundle)");
-
 
         // initialize loader
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
         super.onActivityCreated(savedInstanceState);
-
-        // Restore saved state.
-        //if (savedInstanceState != null) {
-        //}
-
         FragmentManager fm = getActivity().getSupportFragmentManager();
-
         mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
-        TabFragment1 mTabFragment1 = new TabFragment1();
 
         // If we haven't retained the worker fragment, then create it
         // and set this MainActivityFragment as the TaskFragment's target fragment.
         if (mTaskFragment == null) {
             mTaskFragment = new TaskFragment();
             mTaskFragment.setTargetFragment(this, 0);
-            //mTaskFragment.setTargetFragment(mTabFragment1, 1);
             fm.beginTransaction().add(mTaskFragment, TAG_TASK_FRAGMENT).commit();
         }
 
-
-
-        //if (mTaskFragment.isRunning()) {
-        //    mButton.setText(getString(R.string.cancel));
-        //} else {
-        //    mButton.setText(getString(R.string.start));
-        //}
-    }
-
-    // insert data into database
-    public void insertData() {
-        ContentValues[] flavorValuesArr = new ContentValues[androidFlavors.length];
-        // Loop through static array of Flavors, add each to an instance of ContentValues
-        // in the array of ContentValues
-        for (int i = 0; i < androidFlavors.length; i++) {
-            flavorValuesArr[i] = new ContentValues();
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_ICON, androidFlavors[i].getImage());
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_VERSION_NAME,
-                    androidFlavors[i].getVersionName());
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION,
-                    androidFlavors[i].getVersionNumber());
-            flavorValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_FILM_POSTER,
-                    androidFlavors[i].getFilmposter());
-
-
+        if (mTaskFragment.isRunning()) {
+            if (DEBUG) Log.i (LOG_TAG, "cancel");
+        } else {
+            if (DEBUG) Log.i (LOG_TAG, "start");
         }
-        getActivity().getContentResolver().bulkInsert(FlavorsContract.FlavorEntry.CONTENT_URI,
-                flavorValuesArr);
     }
 
     // insert data into database
@@ -216,6 +166,8 @@ public class MainActivityFragment extends Fragment implements
         // in the array of ContentValues
         for (int i = 0; i < movies.size(); i++) {
             tasteValuesArr[i] = new ContentValues();
+            tasteValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_MOVIE_ID,
+                    movies.get(i).getId());
             tasteValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_POSTER_PATH,
                     "http://image.tmdb.org/t/p/w342/" + movies.get(i).getPosterPath());
             int isAdult = movies.get(i).isAdult() ? 1 : 0;
@@ -243,21 +195,6 @@ public class MainActivityFragment extends Fragment implements
             tasteValuesArr[i].put(FlavorsContract.FlavorEntry.COLUMN_VOTE_AVERAGE,
                     movies.get(i).getVoteAverage());
 
-            Log.d(LOG_TAG, "**" + movies.get(i).getPosterPath() +
-                    "adult**" + isAdult +
-                    "overview**" + movies.get(i).getOverview() + ""
-                    + "release date**" + movies.get(i).getReleaseDate() +
-
-                    "o title**" + movies.get(i).getOriginalTitle() +
-
-                    "o language**" + movies.get(i).getOriginalLanguage() +
-                    "title**" + movies.get(i).getTitle() +
-                    "back drop**" + "http://image.tmdb.org/t/p/w342/" + movies.get(i).getBackdropPath() +
-                    "popularity**" +  movies.get(i).getPopularity() +
-                    "vote count**" + movies.get(i).getVoteCount() +
-                    "video **" + isVideo +
-                    "vote average**" + movies.get(i).getVoteAverage());
-
         }
         // bulkInsert our ContentValues array
         getActivity().getContentResolver().bulkInsert(FlavorsContract.FlavorEntry.CONTENT_URI,
@@ -281,11 +218,6 @@ public class MainActivityFragment extends Fragment implements
                         Context context = v.getContext();
                         if (moviesInfo != null) {
                             mIndex = position;
-
-                            //IMAGE LOADED GOES HERE!! /////////////////////////
-
-                            ////////////////////////////////////////////////////
-
                             Bundle bundle = new Bundle();
                             bundle.putParcelableArrayList("movie_Array_List_Extra", moviesInfo);
                             bundle.putInt("position_extra", position);
@@ -295,11 +227,6 @@ public class MainActivityFragment extends Fragment implements
                         }
                     }
                 });
-    }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-    public String getCurrentImage(){
-         return "http://image.tmdb.org/t/p/w342//s7OVVDszWUw79clca0durAIa6mw.jpg";
     }
 
     @Override
@@ -315,14 +242,12 @@ public class MainActivityFragment extends Fragment implements
     // Set the cursor in our CursorAdapter once the Cursor is loaded
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        //((AndroidFlavorCursorRecyclerViewAdapter) mAdapter).swapCursor(data);
         mAdapter.swapCursor(data);
     }
 
     // reset CursorAdapter on Loader Reset
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        //((AndroidFlavorCursorRecyclerViewAdapter) mAdapter).swapCursor(null);
         mAdapter.swapCursor(null);
     }
 
@@ -421,7 +346,7 @@ public class MainActivityFragment extends Fragment implements
                 return true;
 
             case R.id.highest_rated:
-                if (DEBUG) Log.i (LOG_TAG,"****highest_rated - moviesInfo :"+moviesInfo);
+                if (DEBUG) Log.i (LOG_TAG,"***highest_rated - moviesInfo :"+moviesInfo);
                 if (mTaskFragment != null)
                     if (!mTaskFragment.isRunning()) {
                         mTaskFragment.mSortType = HIGHEST_RATED_MOVIES;

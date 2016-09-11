@@ -19,7 +19,7 @@
             android:layout_alignParentStart="false"
             >
 
-            <demo.example.com.customarrayadapter.customviews.CustomImageView
+            <demo.example.com.customarrayadapter.customviews.FutureStudioView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/custom_view"
@@ -38,118 +38,53 @@
                 android:layout_width = "wrap_content"
                 android:layout_height = "wrap_content"
                 android:layout_below="@id/custom_view"
-                 />
-            <ProgressBar
-                android:id="@+id/loading"
+                />
+            <!--ImageView android:id = "@+id/text_image02"
+                android:layout_width = "wrap_content"
+                android:layout_height = "wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/custom_view"
+                /-->
+            <TextView android:id="@+id/date_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="visible" />
-
-            <TextView android:id="@+id/message_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/text_view_date_right_padding"
+                android:background="#750A0A"
                 android:layout_below ="@id/custom_view"
                 />
-
-
-            <!--LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/imageView"
-                android:id="@+id/info1"
-                android:layout_marginBottom="10dp"-->
-
-                <!--LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"-->
-
-                    <!--TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Deadpool"
-                        android:id="@+id/textView2" /-->
-                <!--/LinearLayout-->
-
-                <!--LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"-->
-
-                    <!--TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="7.2"
-                        android:id="@+id/textView4" /-->
-
-                    <!--ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/imageView2"
-                        android:src="@mipmap/ic_launcher" /-->
-
-                <!--/LinearLayout-->
-
-            <!--/LinearLayout-->
-
-            <!--LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
+            <TextView android:id="@+id/duration_view"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/imageView"
-                android:layout_alignParentEnd="false"
-                android:layout_alignParentStart="false"
-                android:baselineAligned="false"
-                android:id="@+id/info2"-->
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/text_view_duration_right_padding"
+                android:background="#450ABA"
+                android:layout_below ="@id/date_view"
+                />
 
-                <!--LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"-->
+            <TextView android:id="@+id/ratings_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/text_view_ratings_right_padding"
+                android:layout_alignParentEnd="true"
+                android:background="#33FF00"
+                android:layout_below ="@id/duration_view"
+                />
 
-                    <!--TextView
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Deadpool"
-                        android:id="@+id/textView3"
-                        android:singleLine="true" /-->
-                <!--/LinearLayout-->
+            <Button android:id="@+id/favorites_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/favorites_button_right_padding"
+                android:layout_below = "@id/ratings_view"
+                />
 
-                <!--LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"-->
-
-                    <!--TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="7.2"
-                        android:id="@+id/textView5"
-                        android:ellipsize="end"
-                        android:singleLine="true" /-->
-
-                    <!--ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/imageView6"
-                        android:src="@mipmap/ic_launcher" /-->
-
-                <!--/LinearLayout-->
-
-            <!--/LinearLayout-->
+             <TextView android:id="@+id/message_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below ="@id/favorites_button"
+                />
         </RelativeLayout>
     </ScrollView>
-
     <!-- -->
-
 </RelativeLayout>

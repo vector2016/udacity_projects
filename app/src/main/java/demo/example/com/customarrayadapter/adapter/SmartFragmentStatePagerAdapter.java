@@ -3,6 +3,7 @@ package demo.example.com.customarrayadapter.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -23,6 +24,13 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
 	@Override
 	public Object instantiateItem(ViewGroup container, int position) {
 		Fragment fragment = (Fragment) super.instantiateItem(container, position);
+
+		Log.d("LOG","instantiateItem()");
+		if (fragment.getView() != null) {
+			Log.d ("LOG", "fragment -> view ");
+			fragment.getView().setTag(position);
+		}
+
 		registeredFragments.put(position, fragment);
 		return fragment;
 	}
@@ -30,6 +38,7 @@ public abstract class SmartFragmentStatePagerAdapter extends FragmentStatePagerA
 	// Unregister when the item is inactive
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
+		Log.d("LOG","destroyItem()");
 		registeredFragments.remove(position);
 		super.destroyItem(container, position, object);
 	}

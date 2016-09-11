@@ -1,0 +1,78 @@
+public class Downloader extends AsyncTask<String, File, Downloader.Result> {
+        private static final String TAG = "Downloader";
+        private final RequestManager glide;
+        public Downloader(RequestManager glide) {
+            this.glide = glide;
+        }
+
+        @Override protected Result doInBackground(String... params) {
+
+            FutureTarget<File>[] requests;
+            requests = new FutureTarget[params.length];
+            // fire everything into Glide queue
+            for (int i = 0; i < params.length; i++) {
+                if (isCancelled()) {
+                    break;
+                }
+                requests[i] = glide
+                        .load(params[i])
+                        .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                ;
+            }
+            // wait for each item
+            Result result = new Result();
+            for (int i = 0; i < params.length; i++) {
+                if (isCancelled()) {
+                    for (int j = i; j < params.length; j++) {
+                        if (requests[i] != null) Glide.clear(requests[i]);
+                        result.failures.put(params[j], new CancellationException());
+                    }
+                    break;
+                }
+                try {
+                    File file = requests[i].get(10, TimeUnit.SECONDS);
+
+                    result.key.add(i, params[i]);
+                    result.success.put(params[i], file);
+                    Log.d(TAG,"params[i] ?" + params[i]);
+                    publishProgress(file);
+                } catch (Exception e) {
+                    result.failures.put(params[i], e);
+                } finally {
+                    Glide.clear(requests[i]);
+                }
+            }
+            return result;
+        }
+
+        @Override protected void onProgressUpdate(File... values) {
+            for (File file : values) {
+                Log.v(TAG, "Finished " + file);
+            }
+        }
+
+        @Override protected void onPostExecute(Downloader.Result result) {
+            Log.i(TAG, String.format(Locale.ROOT, "Downloaded %d files, %d failed.",
+                    result.success.size(), result.failures.size()));
+            result.key.clear();
+        }
+
+         class Result {
+            Map<String, File> success = new HashMap<>();
+            Map<String, Exception> failures = new HashMap<>();
+            List<String> key = new ArrayList<>();
+        }
+    }
+
+    class Result {
+        Map<String,String> key = new HashMap<>();
+    }
+
+
+    public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener){
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            v.getViewTreeObserver().removeGlobalOnLayoutListener(listener);
+        } else {
+            v.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+        }
+    }

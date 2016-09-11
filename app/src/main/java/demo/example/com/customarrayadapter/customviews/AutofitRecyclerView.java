@@ -6,12 +6,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ViewGroup;
 
 public class AutofitRecyclerView extends RecyclerView {
   private static final String LOG_TAG = AutofitRecyclerView.class.getSimpleName();
 
   private GridLayoutManager manager;
   private int columnWidth = -1;     // Column width in pixels
+  private int layout_height;
+
   private int dpiColumnWidth;       //Column width in density independent pixels
 
   public AutofitRecyclerView(Context context) {
@@ -32,16 +35,20 @@ public class AutofitRecyclerView extends RecyclerView {
   private void init(Context context, AttributeSet attrs) {
     if (attrs != null) {
       int[] attrsArray = {
-          android.R.attr.columnWidth
+          android.R.attr.columnWidth,
+          android.R.attr.layout_height
       };
+
       TypedArray array = context.obtainStyledAttributes(attrs, attrsArray);
       columnWidth = array.getDimensionPixelSize(0, -1);
-      dpiColumnWidth = columnWidth / 2;
+      //layout_height = array.getLayoutDimension(1, ViewGroup.LayoutParams.WRAP_CONTENT);
 
+      dpiColumnWidth = columnWidth / 2;
       array.recycle();
     }
 
     manager = new GridLayoutManager(getContext(), 1);
+    manager.setAutoMeasureEnabled(true);
     setLayoutManager(manager);
   }
 
@@ -56,7 +63,7 @@ public class AutofitRecyclerView extends RecyclerView {
               + " getMeasureWidth: "
               + getMeasuredWidth()
               + " columnWidth: "+
-              columnWidth);
+              columnWidth + "layout_height:");
 
       manager.setSpanCount(spanCount);
     }

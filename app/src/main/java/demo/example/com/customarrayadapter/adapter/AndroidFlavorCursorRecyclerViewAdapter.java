@@ -12,13 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import demo.example.com.customarrayadapter.R;
-import demo.example.com.customarrayadapter.customviews.data.FlavorsContract;
+import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
 import demo.example.com.customarrayadapter.model.AndroidFlavor;
 import demo.example.com.customarrayadapter.model.Movie;
 
@@ -138,7 +137,7 @@ public class AndroidFlavorCursorRecyclerViewAdapter extends
             holder.info.setPosterPath(poster);
             holder.info.setOriginalLanguage(movieName);
             String description = cursor.getString(
-                    cursor.getColumnIndex(FlavorsContract.FlavorEntry.COLUMN_DESCRIPTION));
+                    cursor.getColumnIndex(FlavorsContract.FlavorEntry.COLUMN_OVERVIEW));
 
 
             Glide.with(context.getApplicationContext()).load(poster)

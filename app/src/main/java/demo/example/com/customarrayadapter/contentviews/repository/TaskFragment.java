@@ -1,4 +1,4 @@
-package demo.example.com.customarrayadapter.contentviews;
+package demo.example.com.customarrayadapter.contentviews.repository;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -39,7 +39,9 @@ public class TaskFragment extends Fragment {
    * Callback interface through which the fragment will report the
    * task's progress and results back to the Activity.
    */
-  interface TaskCallbacks {
+  
+  //Note: TaskCallback has been made public
+  public interface TaskCallbacks {
     void onPreExecute();
     void onProgressUpdate(int percent);
     void onCancelled();
@@ -195,7 +197,8 @@ public class TaskFragment extends Fragment {
     private final String API_KEY = "60dc21f18cb4ecb2cf95340022bc1bc1";
     private static final String LOCATION = "US";
     private ArrayList<Movie> mMovie;
-    private String mSortType = MOST_POPULAR_MOVIES;
+    //private String mSortType = MOST_POPULAR_MOVIES;
+    private String mSortType = HIGHEST_RATED_MOVIES;
 
     //private ArrayList<Integer> mGenre;
     //private MovieListener movieListener;
@@ -396,8 +399,10 @@ public class TaskFragment extends Fragment {
 
         for (int j=0;j<genreIds.length();j++){
           int genre = genreIds.getInt(j);
+          Log.d(LOG_TAG,"genreId: "+genre);
           mGenre.add(genre);
         }
+        Log.d(LOG_TAG,   "//////////////////////////////////");
         movie.setGenreIds(mGenre);
         mGenre.clear();
 
