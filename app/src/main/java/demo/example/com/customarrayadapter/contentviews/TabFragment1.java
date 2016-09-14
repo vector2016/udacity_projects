@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -19,38 +17,27 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.target.Target;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import demo.example.com.customarrayadapter.R;
+import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
 import demo.example.com.customarrayadapter.customviews.FutureStudioView;
 import demo.example.com.customarrayadapter.customviews.MyLeadingMarginSpan2;
-import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
 import demo.example.com.customarrayadapter.interfaces.OrientationLoadedCallback;
 import demo.example.com.customarrayadapter.model.Movie;
 
@@ -132,10 +119,11 @@ public class TabFragment1 extends Fragment
         //retains fragment instance across Activity re-creation
 
         rootView = createView(savedInstanceState);
+        Log.d("LOG"," root view :" + rootView);
         messageView = (TextView) rootView.findViewById(R.id.message_view);
 
         customView = (FutureStudioView) rootView.findViewById(R.id.custom_view);
-        RelativeLayout layout = (RelativeLayout) rootView.findViewById(R.id.info0);
+        //RelativeLayout layout = (RelativeLayout) rootView.findViewById(R.id.info0);
         imageView =  (ImageView)  rootView.findViewById(R.id.text_image01);
         dateView = (TextView) rootView.findViewById(R.id.date_view);
         durationView = (TextView) rootView.findViewById(R.id.duration_view);
@@ -143,9 +131,9 @@ public class TabFragment1 extends Fragment
         favoritesButton = (Button) rootView.findViewById(R.id.favorites_button);
         favoritesButton.setOnClickListener(this);
 
-        image =  IMAGE_URL + movie.getPosterPath();
-        imageHeader = IMAGE_URL + movie.getBackdropPath();
-        layoutViews();
+        //image =  IMAGE_URL + movie.getPosterPath();
+        //imageHeader = IMAGE_URL + movie.getBackdropPath();
+        //layoutViews();
     }
 
     ViewPropertyAnimation.Animator animationObject = new ViewPropertyAnimation.Animator() {

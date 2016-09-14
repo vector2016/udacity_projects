@@ -3,20 +3,21 @@ package demo.example.com.customarrayadapter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
+
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
+
 import demo.example.com.customarrayadapter.adapter.PagerAdapter;
 import demo.example.com.customarrayadapter.contentviews.MainActivityFragment;
 import demo.example.com.customarrayadapter.contentviews.repository.TaskFragment;
 
-public class MovieActivity extends AppCompatActivity  {
+public class MovieFragment extends Fragment {
         final static String EXTRA_NAME = "extra_name";
     private static final String TAG_TASK_FRAGMENT = "task_fragment";
     private TaskFragment mTaskFragment;
@@ -30,15 +31,17 @@ public class MovieActivity extends AppCompatActivity  {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-        Bundle bundle = getIntent().getExtras();
+        //setContentView(R.layout.activity_detail);
+        //Bundle bundle = getIntent().getExtras();
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+
+        TabLayout tabLayout = (TabLayout)getActivity(). findViewById(R.id.tab_layout);
+        Log.d("LOG","iudgbuieygvbuisygvbsieo::::::  " + tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
@@ -46,25 +49,25 @@ public class MovieActivity extends AppCompatActivity  {
         tabLayout.addTab(tabLayout.newTab().setText("Tab 5"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
 
         mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager)getActivity(). findViewById(R.id.pager);
         viewPager.setClipToPadding(false);
         viewPager.setPageMargin(12);
         viewPager.setOffscreenPageLimit(5);
         final MainActivityFragment fragment = new MainActivityFragment();
 
         final PagerAdapter adapter = new PagerAdapter
-                (getApplicationContext(), getSupportFragmentManager(), tabLayout.getTabCount(), bundle);
+                (getContext(), getFragmentManager(), tabLayout.getTabCount(), null);
         viewPager.setAdapter(adapter);
 
         try {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        //viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -106,6 +109,7 @@ public class MovieActivity extends AppCompatActivity  {
             }
         });
 
+
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -124,16 +128,12 @@ public class MovieActivity extends AppCompatActivity  {
 
             }
         });
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        client = new GoogleApiClient.Builder(getActivity()).addApi(AppIndex.API).build();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

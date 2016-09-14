@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
@@ -24,10 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-
 import java.util.ArrayList;
 
-import demo.example.com.customarrayadapter.MovieActivity;
 import demo.example.com.customarrayadapter.R;
 import demo.example.com.customarrayadapter.adapter.AndroidFlavorCursorRecyclerViewAdapter;
 import demo.example.com.customarrayadapter.contentviews.data.FlavorsContract;
@@ -101,8 +98,8 @@ public class MainActivityFragment extends Fragment implements
          * current progress and results.
          */
 
-        mOnPassReferenceCallback = (onPassReferenceListener) getTargetFragment();
-        if (DEBUG) Log.d(LOG_TAG,"mOnPassReferenceCallback initialised!!" + mOnPassReferenceCallback);
+        //mOnPassReferenceCallback = (onPassReferenceListener) getTargetFragment();
+        //if (DEBUG) Log.d(LOG_TAG,"mOnPassReferenceCallback initialised!!" + mOnPassReferenceCallback);
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -221,9 +218,9 @@ public class MainActivityFragment extends Fragment implements
                             Bundle bundle = new Bundle();
                             bundle.putParcelableArrayList("movie_Array_List_Extra", moviesInfo);
                             bundle.putInt("position_extra", position);
-                            Intent intent = new Intent(context, MovieActivity.class);
-                            intent.putExtras(bundle);
-                            context.startActivity(intent);
+                            //Intent intent = new Intent(context, MovieActivity.class);
+                            //intent.putExtras(bundle);
+                            //context.startActivity(intent);
                         }
                     }
                 });
