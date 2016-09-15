@@ -7,14 +7,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import demo.example.com.customarrayadapter.adapter.PagerAdapter;
-import demo.example.com.customarrayadapter.contentviews.MainActivityFragment;
 import demo.example.com.customarrayadapter.contentviews.repository.TaskFragment;
 
 public class MovieFragment extends Fragment {
@@ -31,16 +33,19 @@ public class MovieFragment extends Fragment {
 
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         //setContentView(R.layout.activity_detail);
         //Bundle bundle = getIntent().getExtras();
 
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
+        View result = inflater.inflate(R.layout.activity_detail, container, false);
 
 
-        TabLayout tabLayout = (TabLayout)getActivity(). findViewById(R.id.tab_layout);
+//------------------------
+        TabLayout tabLayout = (TabLayout)result. findViewById(R.id.tab_layout);
         Log.d("LOG","iudgbuieygvbuisygvbsieo::::::  " + tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
@@ -53,12 +58,12 @@ public class MovieFragment extends Fragment {
 
         mTaskFragment = (TaskFragment) fm.findFragmentByTag(TAG_TASK_FRAGMENT);
 
-        final ViewPager viewPager = (ViewPager)getActivity(). findViewById(R.id.pager);
+        final ViewPager viewPager = (ViewPager)result. findViewById(R.id.pager);
         viewPager.setClipToPadding(false);
         viewPager.setPageMargin(12);
         viewPager.setOffscreenPageLimit(5);
-        final MainActivityFragment fragment = new MainActivityFragment();
 
+//----------------------------------
         final PagerAdapter adapter = new PagerAdapter
                 (getContext(), getFragmentManager(), tabLayout.getTabCount(), null);
         viewPager.setAdapter(adapter);
@@ -132,7 +137,9 @@ public class MovieFragment extends Fragment {
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(getActivity()).addApi(AppIndex.API).build();
-    }
+
+        return result;
+    } //----onCreateView ( .. )
 
 
     @Override

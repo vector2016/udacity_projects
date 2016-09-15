@@ -9,7 +9,6 @@ import demo.example.com.customarrayadapter.contentviews.TabFragment2;
 import demo.example.com.customarrayadapter.contentviews.TabFragment3;
 import demo.example.com.customarrayadapter.contentviews.TabFragment4;
 import demo.example.com.customarrayadapter.contentviews.TabFragment5;
-import demo.example.com.customarrayadapter.model.Movie;
 //import demo.example.com.customarrayadapter.contentviews.TabFragment1.Downloader;
 
 public class PagerAdapter extends SmartFragmentStatePagerAdapter {
@@ -31,7 +30,7 @@ public class PagerAdapter extends SmartFragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 TabFragment1 tab1 = new TabFragment1();
-                tab1.setArguments(bundle);
+                //tab1.setArguments(bundle);
                 Log.d("LOG","** Tab1 ref:"+tab1);
                 return tab1;
             case 1:
